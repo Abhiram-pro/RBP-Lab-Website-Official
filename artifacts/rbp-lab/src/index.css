@@ -733,6 +733,207 @@
 }
 
 @layer components {
+  .page-header-lede {
+    max-width: 40rem;
+    margin: 1.5rem 0 0;
+    color: hsl(var(--muted-foreground));
+    font-size: clamp(1rem, 0.95rem + 0.2vw, 1.15rem);
+    line-height: 1.6;
+  }
+
+  .page-header .section-nav {
+    max-width: 36rem;
+    margin-top: 3rem;
+  }
+
+  .pi-feature {
+    display: grid;
+    grid-template-columns: 14rem minmax(0, 1fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: center;
+    padding-top: 0;
+    padding-bottom: clamp(3rem, 7vw, 6rem);
+    border-bottom: 1px solid hsl(var(--line));
+  }
+
+  .member-portrait {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: hsl(var(--surface-sunken));
+  }
+
+  .member-portrait--featured {
+    width: 14rem;
+    max-width: 100%;
+  }
+
+  .member-portrait img,
+  .member-portrait-blank {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .member-portrait img {
+    object-fit: cover;
+  }
+
+  .member-portrait-blank {
+    background: hsl(var(--surface-sunken));
+  }
+
+  .pi-feature-copy {
+    max-width: 48rem;
+  }
+
+  .pi-feature-copy h2 {
+    margin: 0.9rem 0 0;
+    font-size: clamp(2rem, 3.8vw, 4rem);
+    font-weight: 540;
+    letter-spacing: -0.065em;
+    line-height: 0.98;
+  }
+
+  .pi-feature-copy h2 a:hover {
+    color: hsl(var(--accent));
+  }
+
+  .pi-role {
+    margin: 1rem 0 0;
+    color: hsl(var(--ink-muted));
+    font-family: var(--app-font-mono);
+    font-size: 0.67rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .pi-description {
+    max-width: 42rem;
+    margin: 1.35rem 0 0;
+    color: hsl(var(--ink-muted));
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .pi-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .member-link {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    flex: 0 0 auto;
+    border: 1px solid hsl(var(--line));
+    background: transparent;
+    color: hsl(var(--ink-muted));
+    cursor: pointer;
+    transition: border-color 160ms ease, color 160ms ease;
+  }
+
+  .member-link:hover,
+  .member-link:focus-visible {
+    border-color: hsl(var(--accent));
+    color: hsl(var(--accent));
+  }
+
+  .members-roster-section .section-inner {
+    padding-top: clamp(3rem, 7vw, 6rem);
+    padding-bottom: clamp(4rem, 8vw, 7rem);
+  }
+
+  .members-roster-section--last .section-inner {
+    padding-bottom: clamp(5rem, 10vw, 9rem);
+  }
+
+  .roster-section-header {
+    max-width: 44rem;
+  }
+
+  .roster-section-header h2 {
+    margin: 0;
+    font-size: clamp(2rem, 3.6vw, 4rem);
+    font-weight: 540;
+    letter-spacing: -0.065em;
+    line-height: 0.98;
+  }
+
+  .roster-section-header p {
+    max-width: 32rem;
+    margin: 1rem 0 0;
+    color: hsl(var(--ink-muted));
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .members-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(2rem, 4vw, 4rem) 1rem;
+    margin-top: clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  .member-card {
+    min-width: 0;
+  }
+
+  .member-card-meta {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-top: 0.9rem;
+  }
+
+  .member-card h3 {
+    margin: 0;
+    font-size: clamp(0.92rem, 0.86rem + 0.15vw, 1.05rem);
+    font-weight: 560;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+  }
+
+  .member-card p {
+    margin: 0.45rem 0 0;
+    color: hsl(var(--ink-muted));
+    font-family: var(--app-font-mono);
+    font-size: 0.59rem;
+    letter-spacing: 0.035em;
+    line-height: 1.45;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 768px) {
+    .members-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .members-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 767px) {
+    .pi-feature {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .member-portrait--featured {
+      width: min(14rem, 72vw);
+    }
+  }
+}
+
+@layer components {
   .section-band {
     position: relative;
     width: 100%;

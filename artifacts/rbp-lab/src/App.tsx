@@ -3,8 +3,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { ArrowLeft, ArrowRight, ArrowUpRight, Dna, Network, RefreshCw, ScanLine } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, Dna, Linkedin, Network, RefreshCw, ScanLine } from 'lucide-react';
 import { EmptyPage, Section, SectionHeader } from '@/components/page-patterns';
+import { PageHeader, SectionNav } from '@/components/page-patterns';
 import { SiteShell } from '@/components/site-shell';
 import NotFound from '@/pages/not-found';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
@@ -118,6 +119,146 @@ const newsItems = [
     venue: 'PUBLICATION · IUBMB',
   },
 ];
+
+type Member = {
+  name: string;
+  role: string;
+  slug: string;
+};
+
+const currentMembers: Member[] = [
+  { name: 'Khalid Mohd Ibrahimi', role: 'Postdoctoral Researcher', slug: 'khalid-mohd-ibrahimi' },
+  { name: 'Priyanka Yadav', role: 'PhD Scholar · NMD & UPF3B Regulation', slug: 'priyanka-yadav' },
+  { name: 'Sourabh Chakrabarty', role: 'PhD Scholar · RNA-Protein Interactions', slug: 'sourabh-chakrabarty' },
+  { name: 'Silpi Sikha Bora', role: 'PhD Scholar', slug: 'silpi-sikha-bora' },
+  { name: 'Lashika Goyal', role: 'M.Tech Scholar', slug: 'lashika-goyal' },
+  { name: 'Priya Gautam', role: 'M.Tech Scholar', slug: 'priya-gautam' },
+];
+
+const alumni: Member[] = [
+  { name: 'Bhagyashree Deka', role: 'PhD Scholar', slug: 'bhagyashree-deka' },
+  { name: 'Pratap Chandra', role: 'PhD Scholar', slug: 'pratap-chandra' },
+  { name: 'Sweta Kumari', role: 'PhD Scholar', slug: 'sweta-kumari' },
+  { name: 'Ayushi Rehman', role: 'PhD Scholar', slug: 'ayushi-rehman' },
+  { name: 'Jebasingh Winston R', role: 'M.Tech', slug: 'jebasingh-winston' },
+  { name: 'Harita M', role: 'M.Tech', slug: 'harita-m' },
+  { name: 'Raja T', role: 'M.Tech', slug: 'raja-t' },
+  { name: 'Vishal Bharti', role: 'M.Tech', slug: 'vishal-bharti' },
+  { name: 'Ajay Narwade', role: 'M.Tech', slug: 'ajay-narwade' },
+  { name: 'Sonali Devi', role: 'M.Tech', slug: 'sonali-devi' },
+  { name: 'Harekrishna Mandal', role: 'M.Tech', slug: 'harekrishna-mandal' },
+  { name: 'Nayan Jain', role: 'M.Tech', slug: 'nayan-jain' },
+  { name: 'Gourab Chatterjee', role: 'M.Tech', slug: 'gourab-chatterjee' },
+];
+
+const interns: Member[] = [
+  { name: 'Abhiram Ganji', role: 'Summer Intern · Data Science & AI', slug: 'abhiram-ganji' },
+];
+
+function PortraitFrame({ member, featured = false }: { member: Member; featured?: boolean }) {
+  const [missing, setMissing] = useState(false);
+  const alt = `Portrait of ${member.name}`;
+
+  return (
+    <div className={`member-portrait ${featured ? 'member-portrait--featured' : ''}`.trim()}>
+      {missing ? (
+        <div className="member-portrait-blank" role="img" aria-label={`${alt}. Image not available.`} />
+      ) : (
+        <img
+          src={assetPath(`/images/members/${member.slug}.jpg`)}
+          alt={alt}
+          onError={() => setMissing(true)}
+        />
+      )}
+    </div>
+  );
+}
+
+function LinkedInButton({ name }: { name: string }) {
+  return (
+    <button className="member-link" type="button" aria-label={`LinkedIn profile for ${name}`} title="LinkedIn profile not linked">
+      <Linkedin size={15} strokeWidth={1.5} aria-hidden="true" />
+    </button>
+  );
+}
+
+function MemberCard({ member }: { member: Member }) {
+  return (
+    <article className="member-card">
+      <PortraitFrame member={member} />
+      <div className="member-card-meta">
+        <div>
+          <h3>{member.name}</h3>
+          <p>{member.role}</p>
+        </div>
+        <LinkedInButton name={member.name} />
+      </div>
+    </article>
+  );
+}
+
+function RosterSectionHeader({ title, lede }: { title: string; lede?: string }) {
+  return (
+    <div className="roster-section-header">
+      <h2>{title}</h2>
+      {lede ? <p>{lede}</p> : null}
+    </div>
+  );
+}
+
+function Members() {
+  const pi: Member = { name: 'Prof. Kusum K Singh', role: 'Principal Investigator · Assistant Professor', slug: 'kusum-k-singh' };
+
+  return (
+    <>
+      <PageHeader eyebrow="RNA-Binding Proteins Laboratory · IIT Guwahati" title="Our People">
+        <p className="page-header-lede">The researchers, scholars, and students who make up the RBP Laboratory — past and present.</p>
+        <SectionNav
+          items={[
+            { label: 'Current Members', href: '#current' },
+            { label: 'Alumni', href: '#alumni' },
+            { label: 'Interns', href: '#interns' },
+          ]}
+        />
+      </PageHeader>
+
+      <section className="page-width pi-feature" aria-labelledby="pi-feature-heading">
+        <PortraitFrame member={pi} featured />
+        <div className="pi-feature-copy">
+          <div className="eyebrow">Principal Investigator</div>
+          <h2 id="pi-feature-heading"><Link href="/members/kusum-k-singh">Prof. Kusum K Singh</Link></h2>
+          <p className="pi-role">{pi.role}</p>
+          <p className="pi-description">Department of Biosciences and Bioengineering, IIT Guwahati — post-transcriptional gene regulation, mRNA splicing, and the molecular biology of RNA-binding protein complexes.</p>
+          <div className="pi-actions">
+            <Link className="text-link" href="/members/kusum-k-singh">Full faculty profile <ArrowRight size={15} aria-hidden="true" /></Link>
+            <LinkedInButton name={pi.name} />
+          </div>
+        </div>
+      </section>
+
+      <Section tone="base" id="current" className="members-roster-section">
+        <RosterSectionHeader title="Current Members" />
+        <div className="members-grid">
+          {currentMembers.map((member) => <MemberCard member={member} key={member.slug} />)}
+        </div>
+      </Section>
+
+      <Section tone="raised" id="alumni" className="members-roster-section">
+        <RosterSectionHeader title="Alumni" lede="Former members of the RNA-Binding Proteins Laboratory." />
+        <div className="members-grid">
+          {alumni.map((member) => <MemberCard member={member} key={member.slug} />)}
+        </div>
+      </Section>
+
+      <Section tone="base" id="interns" className="members-roster-section members-roster-section--last">
+        <RosterSectionHeader title="Interns" />
+        <div className="members-grid">
+          {interns.map((member) => <MemberCard member={member} key={member.slug} />)}
+        </div>
+      </Section>
+    </>
+  );
+}
 
 function Home() {
   const newsRail = useRef<HTMLDivElement>(null);
@@ -238,7 +379,7 @@ function Router() {
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/research">{() => <EmptyPage title="Research" />}</Route>
-          <Route path="/members">{() => <EmptyPage title="Members" />}</Route>
+          <Route path="/members" component={Members} />
           <Route path="/members/kusum-k-singh" component={PrincipalInvestigator} />
           <Route path="/publications">{() => <EmptyPage title="Publications" />}</Route>
           <Route path="/news">{() => <EmptyPage title="News" />}</Route>
