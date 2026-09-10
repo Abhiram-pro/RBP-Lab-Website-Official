@@ -1,0 +1,120 @@
+Build the home page at /.
+
+Layout inspired by steglelab.org: an image-led hero, then a small number of scannable
+sections that act as gateways into the deeper pages. Keep the text on this page short —
+the detail lives on the inner pages. Use the <Section>, <SectionHeader> and token system
+from the scaffold. No hardcoded colours.
+
+## 1. HERO — <Section tone="inverse">
+
+Two columns on desktop, stacked on mobile.
+
+LEFT COLUMN:
+- Mono uppercase eyebrow, in a pill with a hairline border:
+  "Dept. of Biosciences & Bioengineering · IIT Guwahati"
+- <h1>: "RNA-Binding Proteins Laboratory"
+- Lede: "Investigating the molecular logic of RNA-binding proteins in nonsense-mediated
+  decay, splicing regulation, and gene expression fidelity."
+- Four pill-shaped keyword tags with hairline borders:
+  Alternative Splicing · Splicing · Gene Expression · EJC Research
+- Two buttons: "Explore Research" → /research (solid, high contrast against the dark band)
+  and "Meet the Team" → /members (outlined)
+
+RIGHT COLUMN:
+- The research figure at /images/lab/Proteomics.jpeg.
+- IMPORTANT: this is a scientific figure on a white background, not a photograph. Present
+  it on a light card with generous padding and object-fit: contain, so it reads as a
+  published figure plate sitting on the dark band. Do not crop it, do not use object-fit:
+  cover, and do not place it directly on the dark background — it will disappear.
+- Alt text: "Research figure: western blot of MAGOH and MAGOHB knockouts, ribbon structures
+  of the two paralogs, and a bar chart of mean normalised peptide intensity across knockout
+  and wildtype conditions"
+- Mono uppercase caption beneath the card: "MAGOH / MAGOHB paralogs · Quantitative proteomics"
+
+BACKGROUND: a faint 72px square grid using --line-inverse, radially masked so it fades out
+toward the edges. Subtle texture, not a visible pattern.
+
+## 2. RESEARCH FOCUS
+
+A numbered 2×2 grid (01–04). Each item: the number in mono, an icon, a heading, and one
+short paragraph. Section eyebrow "Research Focus", heading "Four questions the lab is
+working on", lede "Our programme spans the assembly of ribonucleoprotein complexes, their
+disruption in disease, and the regulatory consequences downstream."
+
+01  ASAP & EJC in mRNA Metabolism
+    Understanding the functions of the Apoptosis and Splicing-Associated Protein (ASAP)
+    complex in relation to the Exon Junction Complex (EJC) in mRNA metabolism.
+
+02  RBPs in Human Disease
+    Elucidating the molecular involvement of RNA-binding proteins in human diseases such
+    as cancers and neurodevelopmental disorders.
+
+03  Post-Transcriptional Regulation
+    Exploring the post-transcriptional gene regulation of different RNA-binding proteins
+    across stages of gene expression.
+
+04  Isoform Switching
+    Investigating the functional outcomes of isoform switching and its consequences for
+    mRNP composition and activity.
+
+End the section with a link: "Read the full research overview →" to /research.
+
+## 3. GATEWAY CARDS
+
+Three linked cards to the site's main destinations, in a row on desktop. Each: an image,
+a short label, and one line of text. This is the stegle-style "gateway" pattern — minimal
+text, image-led, each card a doorway.
+
+- Research     → /research      image: /images/lab/Cas-9_KO_and_Splicing.jpeg
+  "Exon junction complexes, the ASAP complex, and the regulation of RNA fate."
+- Team         → /members       image: /images/gallery/gallery-01.jpg
+  "The researchers, scholars, and students who make up the laboratory."
+- Publications → /publications  image: /images/lab/Isoform_Usage.jpeg
+  "Sixty-three papers spanning RNA biology, splicing, and computational genomics."
+
+## 4. LAB NEWS & ACHIEVEMENTS
+
+A horizontally scrolling carousel of news cards. Each card: a 16:9 image at the top, a
+headline, then a large year and a small uppercase mono venue label at the bottom of the
+card. Cards are equal height with the year/label row bottom-aligned regardless of headline
+length.
+
+Prev/next arrow buttons on desktop, positioned over the image band (not over the card
+text). Below the sm breakpoint, hide the arrows and rely on native touch scrolling. Hide
+the native scrollbar. Each arrow needs an aria-label.
+
+The section heading links to /news.
+
+Use exactly these six items, in this order:
+
+1. /images/lab/Proteomics.jpeg
+   "Proteomics uncovers distinct gene-regulatory functions of the MAGOH/MAGOHB paralogs in
+   cell proliferation."
+   2026 — PUBLICATION · BBA GENE REGULATORY MECHANISMS
+
+2. /images/lab/Cas-9_KO_and_Splicing.jpeg
+   "CRISPR-based genome editing developed to endogenously distinguish the paralogs MAGOH
+   and MAGOHB."
+   2025 — PUBLICATION · GENE REPORTS
+
+3. /images/lab/Localization_of_MAGOH_delta_37.jpeg
+   "An EJC-independent novel isoform of MAGOH — MAGOH-Δ37 — identified along with its
+   interactome."
+   2025 — PUBLICATION · BBRC
+
+4. /images/lab/IP_Data.jpeg
+   "BioID proximity mapping reveals novel SAP18 interactions within the prespliceosomal
+   complex."
+   2024 — PUBLICATION · BBRC
+
+5. /images/lab/Isoform_Usage.jpeg
+   "Ongoing ICMR-funded project as Co-PI on genome-wide estrogen-regulated gene expression."
+   ICMR — FUNDING · CO-PI
+
+6. /images/lab/Invasion.jpeg
+   "RNPS1 identified as an oncogenic splicing factor driving proliferation in cervical
+   cancer cells."
+   2022 — PUBLICATION · IUBMB
+
+Do not add, reword, or reorder these items, and do not substitute stock photography for
+the image paths — every image listed is a real figure from this lab's own research.
