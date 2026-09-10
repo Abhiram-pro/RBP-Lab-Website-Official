@@ -1,5 +1,40 @@
 import { type ReactNode } from 'react';
 
+type SectionProps = {
+  tone?: 'base' | 'raised' | 'sunken' | 'inverse';
+  width?: 'content' | 'prose' | 'full';
+  id?: string;
+  children: ReactNode;
+  className?: string;
+};
+
+export function Section({ tone = 'base', width = 'content', id, children, className = '' }: SectionProps) {
+  return (
+    <section className={`section-band section-band--${tone} ${className}`.trim()} id={id}>
+      <div className={`section-inner section-inner--${width}`}>{children}</div>
+    </section>
+  );
+}
+
+type SectionHeaderProps = {
+  eyebrow: string;
+  title: string;
+  lede?: string;
+  tone?: 'light' | 'dark';
+  children?: ReactNode;
+};
+
+export function SectionHeader({ eyebrow, title, lede, tone = 'light', children }: SectionHeaderProps) {
+  return (
+    <div className={`section-header section-header--${tone}`}>
+      <div className="eyebrow">{eyebrow}</div>
+      <h2>{title}</h2>
+      {lede ? <p>{lede}</p> : null}
+      {children}
+    </div>
+  );
+}
+
 type PageHeaderProps = {
   eyebrow?: string;
   title: string;
