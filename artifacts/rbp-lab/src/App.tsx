@@ -134,7 +134,6 @@ function Home() {
       <Section tone="inverse" className="home-hero-section">
         <div className="home-hero-grid">
           <div className="home-hero-copy">
-            <div className="hero-eyebrow">Dept. of Biosciences &amp; Bioengineering · IIT Guwahati</div>
             <h1 id="home-heading" data-testid="heading-rna-binding-proteins-laboratory">RNA-Binding Proteins Laboratory</h1>
             <p className="home-hero-lede">Investigating the molecular logic of RNA-binding proteins in nonsense-mediated decay, splicing regulation, and gene expression fidelity.</p>
             <div className="keyword-list" aria-label="Research keywords">
