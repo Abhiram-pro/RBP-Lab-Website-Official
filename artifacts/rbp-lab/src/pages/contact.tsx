@@ -55,6 +55,17 @@ export function ContactPage() {
             </div>
           </div>
         </div>
+
+        <figure className="contact-map">
+          <iframe
+            src={CONTACT.mapEmbedUrl}
+            title={CONTACT.mapLabel}
+            loading="lazy"
+            allowFullScreen
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+          <figcaption>{CONTACT.addressLines.join(' · ')}</figcaption>
+        </figure>
       </Section>
     </>
   );

@@ -61,7 +61,11 @@ export function SiteShell({ children }: { children: ReactNode }) {
           observer.unobserve(entry.target);
         });
       },
-      { threshold: 0.15 },
+      // threshold is a ratio of the element's own area, so a section taller
+      // than the viewport can never reach a fractional threshold — the
+      // publications page (63 entries in one section) never fired at 0.15.
+      // Trigger on any intersection instead, pulled in slightly by rootMargin.
+      { threshold: 0, rootMargin: '0px 0px -12% 0px' },
     );
 
     revealElements.forEach((element) => observer.observe(element));
@@ -74,7 +78,12 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <header className="site-header">
         <div className="header-inner">
           <Link className="wordmark" href="/" aria-label="RNA-Binding Proteins Laboratory home" data-testid="link-home-wordmark" onClick={() => setMenuOpen(false)}>
-            <span className="wordmark-mark" aria-hidden="true">R·B</span>
+            <img
+              className="wordmark-mark"
+              src={`${import.meta.env.BASE_URL}logo.png`}
+              alt=""
+              aria-hidden="true"
+            />
             <span className="wordmark-lockup">
               <span className="wordmark-text">RBP Lab</span>
               <span className="wordmark-subtext">RNA-Binding Proteins</span>
@@ -126,21 +135,21 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <Marquee speed={28} ariaLabel="Funding partners">
               {FUNDERS.map((funder) => (
                 <div className="funder-logo" key={funder.id}>
-                  <img src={funder.logoSrc} alt={funder.name} />
+                  <img src={`${import.meta.env.BASE_URL}${funder.logoSrc.replace(/^\/+/, '')}`} alt={funder.name} />
                 </div>
               ))}
             </Marquee>
           </div>
           <div className="footer-bottom">
             <span>© 2026 RNA-Binding Proteins Laboratory, IIT Guwahati. All rights reserved.</span>
-            <span>FUNDING CREDIT · VERIFIED DETAILS PENDING</span>
+            <span>FUNDED BY DBT · DST-SERB · CSIR · ICMR · IIT GUWAHATI</span>
           </div>
         </div>
       </footer>
       <nav className="mobile-tabs" aria-label="Mobile quick navigation">
-        {mobileNavigation.map((item) => (
+        {mobileNavigation.map((item, index) => (
           <Link className="mobile-tab" href={item.href} aria-current={isCurrent(location, item.href) ? 'page' : undefined} data-testid={`link-tab-${item.label.toLowerCase()}`} key={item.href}>
-            <span aria-hidden="true">{item.label === 'Home' ? '01' : item.label === 'Research' ? '02' : item.label === 'Members' ? '03' : '04'}</span>
+            <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
             <span>{item.label}</span>
           </Link>
         ))}

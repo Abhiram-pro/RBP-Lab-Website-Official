@@ -4,9 +4,19 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ArrowLeft, ArrowRight, ArrowUpRight, Dna, Linkedin, Network, RefreshCw, ScanLine } from 'lucide-react';
-import { EmptyPage, PageHeader, Section, SectionHeader, SectionNav } from '@/components/page-patterns';
+import { PageHeader, Section, SectionHeader, SectionNav } from '@/components/page-patterns';
 import { CollaboratorsPage, EquipmentPage, GalleryPage, NewsPage, PublicationsPage } from '@/pages/content-pages';
 import { ContactPage } from '@/pages/contact';
+import {
+  AWARDS,
+  COURSES,
+  EDUCATION,
+  EXPERIENCE,
+  PROFILE_COLUMNS,
+  TALKS,
+  type TimelineEntry,
+} from '@/data/faculty';
+import { ResearchPage } from '@/pages/research';
 import { SiteShell } from '@/components/site-shell';
 import NotFound from '@/pages/not-found';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
@@ -78,7 +88,7 @@ const gatewayCards = [
     label: 'Publications',
     href: '/publications',
     image: '/images/lab/Isoform_Usage.jpeg',
-    description: 'Sixty-three papers spanning RNA biology, splicing, and computational genomics.',
+    description: 'Peer-reviewed work on splicing regulation, nonsense-mediated decay, and RNA-protein interactions.',
   },
 ];
 
@@ -261,13 +271,6 @@ function Members() {
   );
 }
 
-type TimelineEntry = {
-  period: string;
-  title?: string;
-  detail: string;
-  descriptionOnly?: boolean;
-};
-
 function TimelineItem({ entry }: { entry: TimelineEntry }) {
   return (
     <li className={`timeline-item ${entry.descriptionOnly ? 'timeline-item--description-only' : ''}`.trim()}>
@@ -292,46 +295,10 @@ function Timeline({ entries }: { entries: TimelineEntry[] }) {
   );
 }
 
-const placeholderEducation: TimelineEntry[] = [
-  { period: 'PERIOD', title: 'PLACEHOLDER — education entry 1', detail: 'Verified degree and institution will be added here.' },
-  { period: 'PERIOD', title: 'PLACEHOLDER — education entry 2', detail: 'Verified degree and institution will be added here.' },
-  { period: 'PERIOD', title: 'PLACEHOLDER — education entry 3', detail: 'Verified degree and institution will be added here.' },
-];
-
-const placeholderExperience: TimelineEntry[] = [
-  { period: 'PERIOD', title: 'PLACEHOLDER — experience entry 1', detail: 'Verified role and institution will be added here.' },
-  { period: 'PERIOD', title: 'PLACEHOLDER — experience entry 2', detail: 'Verified role and institution will be added here.' },
-  { period: 'PERIOD', title: 'PLACEHOLDER — experience entry 3', detail: 'Verified role and institution will be added here.' },
-];
-
-const placeholderAwards: TimelineEntry[] = [
-  { period: 'YEAR', detail: 'PLACEHOLDER — award or fellowship entry 1', descriptionOnly: true },
-  { period: 'YEAR', detail: 'PLACEHOLDER — award or fellowship entry 2', descriptionOnly: true },
-  { period: 'YEAR', detail: 'PLACEHOLDER — award or fellowship entry 3', descriptionOnly: true },
-];
-
-const placeholderCourses = [
-  { code: 'CODE', title: 'PLACEHOLDER — course entry 1', details: 'L-T-P-C · TERM' },
-  { code: 'CODE', title: 'PLACEHOLDER — course entry 2', details: 'L-T-P-C · TERM' },
-  { code: 'CODE', title: 'PLACEHOLDER — course entry 3', details: 'L-T-P-C · TERM' },
-];
-
-const placeholderTalks = [
-  { number: 33, title: 'PLACEHOLDER — invited talk entry 1', details: 'VENUE · DATE' },
-  { number: 32, title: 'PLACEHOLDER — invited talk entry 2', details: 'VENUE · DATE' },
-  { number: 31, title: 'PLACEHOLDER — invited talk entry 3', details: 'VENUE · DATE' },
-];
-
-function PlaceholderColumns() {
-  const columns = [
-    { label: 'Visiting Faculty', items: ['PLACEHOLDER — entry 1', 'PLACEHOLDER — entry 2'] },
-    { label: 'Collaborations', items: ['PLACEHOLDER — entry 1', 'PLACEHOLDER — entry 2', 'PLACEHOLDER — entry 3'] },
-    { label: 'Professional Memberships', items: ['PLACEHOLDER — entry 1', 'PLACEHOLDER — entry 2'] },
-  ];
-
+function ProfileColumns() {
   return (
     <div className="profile-columns">
-      {columns.map((column) => (
+      {PROFILE_COLUMNS.map((column) => (
         <div className="profile-column" key={column.label}>
           <div className="eyebrow">{column.label}</div>
           <ul>
@@ -375,7 +342,7 @@ function FacultyProfile() {
           <div className="eyebrow">Background</div>
           <h2>Education</h2>
         </div>
-        <Timeline entries={placeholderEducation} />
+        <Timeline entries={EDUCATION} />
       </Section>
 
       <Section tone="raised" id="experience" className="faculty-section">
@@ -383,8 +350,8 @@ function FacultyProfile() {
           <div className="eyebrow">Career</div>
           <h2>Professional Experience</h2>
         </div>
-        <Timeline entries={placeholderExperience} />
-        <PlaceholderColumns />
+        <Timeline entries={EXPERIENCE} />
+        <ProfileColumns />
       </Section>
 
       <Section tone="base" id="teaching" className="faculty-section">
@@ -394,7 +361,7 @@ function FacultyProfile() {
           <p>Course code, title, credit structure (L-T-P-C), and the term most recently taught.</p>
         </div>
         <div className="course-list">
-          {placeholderCourses.map((course) => (
+          {COURSES.map((course) => (
             <div className="course-row" key={course.title}>
               <div className="course-code">{course.code}</div>
               <div>
@@ -411,17 +378,17 @@ function FacultyProfile() {
           <div className="eyebrow">Recognition</div>
           <h2>Awards and Fellowships</h2>
         </div>
-        <Timeline entries={placeholderAwards} />
+        <Timeline entries={AWARDS} />
       </Section>
 
       <Section tone="base" id="talks" className="faculty-section">
         <div className="profile-section-heading">
           <div className="eyebrow">Dissemination</div>
           <h2>Invited Talks, Symposia &amp; Conferences</h2>
-          <p>33 entries, most recent first.</p>
+          <p>{TALKS.length} entries, most recent first.</p>
         </div>
         <div className="talk-list">
-          {placeholderTalks.map((talk) => (
+          {TALKS.map((talk) => (
             <div className="talk-row" key={talk.number}>
               <div className="talk-number">{talk.number}</div>
               <div>
@@ -542,7 +509,7 @@ function Router() {
       <SiteShell>
         <Switch>
           <Route path="/" component={Home} />
-          <Route path="/research">{() => <EmptyPage title="Research" />}</Route>
+          <Route path="/research" component={ResearchPage} />
           <Route path="/members" component={Members} />
           <Route path="/members/kusum-k-singh" component={FacultyProfile} />
           <Route path="/publications" component={PublicationsPage} />

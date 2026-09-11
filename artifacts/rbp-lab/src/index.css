@@ -100,6 +100,9 @@
   }
 
   html {
+    /* 18px base. The stylesheet is entirely rem-based, so this scales type
+       and rhythm proportionally rather than distorting the layout. */
+    font-size: 112.5%;
     background: hsl(var(--background));
     scroll-behavior: smooth;
   }
@@ -187,21 +190,16 @@
   }
 
   .wordmark-mark {
-    display: grid;
-    place-items: center;
+    display: block;
     width: 2rem;
     height: 2rem;
     flex: 0 0 auto;
-    border: 1px solid hsl(var(--accent-soft));
-    color: hsl(var(--accent-soft));
-    font-family: var(--app-font-mono);
-    font-size: 0.65rem;
-    letter-spacing: -0.08em;
+    object-fit: contain;
   }
 
   .site-header .wordmark-mark {
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 3.25rem;
+    height: 3.25rem;
   }
 
   .wordmark-text {
@@ -222,7 +220,7 @@
   .wordmark-subtext {
     color: hsl(var(--ink-inverse-muted));
     font-family: var(--app-font-mono);
-    font-size: 0.53rem;
+    font-size: 0.7rem;
     font-weight: 400;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -238,7 +236,7 @@
   .mobile-tab {
     color: hsl(var(--muted-foreground));
     font-family: var(--app-font-mono);
-    font-size: 0.64rem;
+    font-size: 0.7rem;
     letter-spacing: 0.045em;
     text-transform: uppercase;
     transition: color 160ms ease;
@@ -292,7 +290,7 @@
     border: 1px solid hsl(var(--accent));
     color: hsl(var(--accent));
     font-family: var(--app-font-mono);
-    font-size: 0.64rem;
+    font-size: 0.7rem;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     transition: background-color 160ms ease, color 160ms ease;
@@ -373,7 +371,7 @@
   .meta-label {
     color: hsl(var(--primary));
     font-family: var(--app-font-mono);
-    font-size: 0.64rem;
+    font-size: 0.7rem;
     letter-spacing: 0.1em;
     line-height: 1.5;
     text-transform: uppercase;
@@ -464,7 +462,7 @@
     gap: 1rem;
     color: hsl(var(--muted-foreground));
     font-family: var(--app-font-mono);
-    font-size: 0.65rem;
+    font-size: 0.71rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
@@ -523,12 +521,14 @@
   .section-nav-index {
     color: hsl(var(--muted-foreground));
     font-family: var(--app-font-mono);
-    font-size: 0.65rem;
+    font-size: 0.71rem;
   }
 
   .page-header {
     padding-top: clamp(4.5rem, 11vw, 9rem);
-    padding-bottom: clamp(3rem, 7vw, 6rem);
+    /* Was clamp(3rem, 7vw, 6rem); the following section adds its own top
+       padding, so the two compounded into a large gap under the lede. */
+    padding-bottom: clamp(1.75rem, 3vw, 2.5rem);
   }
 
   .page-header h1 {
@@ -650,7 +650,7 @@
     padding-top: 2.5rem;
     color: hsl(var(--muted-foreground));
     font-family: var(--app-font-mono);
-    font-size: 0.6rem;
+    font-size: 0.68rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
@@ -673,7 +673,7 @@
     justify-items: center;
     gap: 0.35rem;
     padding: 0.2rem;
-    font-size: 0.55rem;
+    font-size: 0.71rem;
   }
 
   @media (min-width: 768px) {
@@ -744,8 +744,17 @@
 
   .contact-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.8fr);
-    gap: clamp(3rem, 10vw, 10rem);
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.85fr);
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  /* Both columns share the same rule and padding so their eyebrows sit on a
+     common baseline. */
+  .contact-address,
+  .contact-pi {
+    padding-top: 1rem;
+    border-top: 1px solid hsl(var(--line));
   }
 
   .contact-address {
@@ -803,23 +812,44 @@
     margin-bottom: 0.35rem;
     color: hsl(var(--ink-muted));
     font-family: var(--app-font-mono);
-    font-size: 0.6rem;
+    font-size: 0.68rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
   .contact-pi {
     align-self: start;
-    padding-top: 1rem;
-    border-top: 1px solid hsl(var(--line));
+  }
+
+  .contact-map {
+    margin: clamp(3rem, 6vw, 5rem) 0 0;
+  }
+
+  .contact-map iframe {
+    display: block;
+    width: 100%;
+    height: clamp(18rem, 34vw, 26rem);
+    border: 1px solid hsl(var(--line));
+    /* The embed renders its own light UI; a filter would fight it. */
+    background: hsl(var(--surface-raised));
+  }
+
+  .contact-map figcaption {
+    margin-top: 0.9rem;
+    color: hsl(var(--ink-muted));
+    font-family: var(--app-font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 
   .contact-pi h2 {
     margin: 1rem 0 0;
-    font-size: clamp(2rem, 3.7vw, 4rem);
+    font-size: clamp(1.75rem, 2.6vw, 2.75rem);
     font-weight: 560;
-    letter-spacing: -0.065em;
-    line-height: 0.98;
+    letter-spacing: -0.05em;
+    line-height: 1.05;
+    text-wrap: balance;
   }
 
   .contact-pi > p {
@@ -835,8 +865,14 @@
   .contact-pi-links {
     display: grid;
     justify-items: start;
-    gap: 0.9rem;
-    margin-top: 2rem;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  /* text-link carries a 2.25rem top margin for use after body copy; inside
+     this stack the container already provides the spacing. */
+  .contact-pi-links .text-link {
+    margin-top: 0;
   }
 
   .site-footer {
@@ -885,7 +921,7 @@
     gap: 0.5rem 1rem;
     color: hsl(var(--accent));
     font-family: var(--app-font-mono);
-    font-size: 0.62rem;
+    font-size: 0.69rem;
     letter-spacing: 0.04em;
   }
 
@@ -907,7 +943,7 @@
     gap: 0.45rem 1.2rem;
     color: hsl(var(--ink-muted));
     font-family: var(--app-font-mono);
-    font-size: 0.62rem;
+    font-size: 0.69rem;
     letter-spacing: 0.05em;
     line-height: 1.5;
     text-transform: uppercase;
@@ -948,15 +984,21 @@
     display: grid;
     place-items: center;
     width: auto;
-    height: 5rem;
+    height: 4.5rem;
     flex: 0 0 auto;
+    /* The marquee track is transformed, which isolates the blend below — the
+       logo needs its own matching backdrop for multiply to resolve against. */
+    background: hsl(var(--surface-raised));
   }
 
   .funder-logo img {
     display: block;
     width: auto;
-    height: 5rem;
+    height: 4.5rem;
     object-fit: contain;
+    /* Several marks are JPEGs on solid white, which read as boxes against the
+       cream band; multiply drops the white without needing cut-out assets. */
+    mix-blend-mode: multiply;
   }
 
   .footer-bottom {
@@ -967,7 +1009,7 @@
     border-top: 1px solid hsl(var(--line));
     color: hsl(var(--ink-muted));
     font-family: var(--app-font-mono);
-    font-size: 0.58rem;
+    font-size: 0.66rem;
     letter-spacing: 0.05em;
     line-height: 1.5;
     text-transform: uppercase;
@@ -990,7 +1032,10 @@
     animation: section-reveal var(--duration-slow) var(--ease-out) both;
   }
 
-  .stagger-list > * {
+  /* Gated on .motion-ready like the section reveal above: without the guard,
+     any failure to apply .is-visible leaves content permanently invisible
+     rather than merely un-animated. */
+  .motion-ready .stagger-list > * {
     opacity: 0;
     transform: translateY(8px);
   }
@@ -1123,7 +1168,7 @@
     background: transparent;
     color: hsl(var(--ink));
     font-family: var(--app-font-mono);
-    font-size: 0.62rem;
+    font-size: 0.69rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     cursor: pointer;
@@ -1142,7 +1187,7 @@
     border-radius: 50%;
     background: hsl(var(--accent));
     color: hsl(var(--surface-inverse));
-    font-size: 0.55rem;
+    font-size: 0.71rem;
   }
 
   .filter-menu {
@@ -1177,8 +1222,21 @@
   .equipment-section .section-inner,
   .collaborators-section .section-inner,
   .gallery-section .section-inner {
-    padding-top: clamp(3rem, 7vw, 6rem);
-    padding-bottom: clamp(5rem, 9vw, 8rem);
+    padding-top: clamp(1.75rem, 3vw, 2.5rem);
+    /* Was clamp(5rem, 9vw, 8rem), which stacked on top of the footer's own
+       top padding and left a large dead gap at the foot of these pages. */
+    padding-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  /* Same trim for the remaining inner pages (research, faculty profile,
+     contact). Home nests its sections inside .home-page, so it is a direct
+     child only on inner pages and keeps its own rhythm. */
+  .main-content > .section-band:last-child .section-inner {
+    padding-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .main-content > .page-header + .section-band .section-inner {
+    padding-top: clamp(1.75rem, 3vw, 2.5rem);
   }
 
   .publication-type-group + .publication-type-group {
@@ -1224,8 +1282,67 @@
   }
 
   .publication-entry {
+    display: grid;
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    gap: 1.1rem;
+    align-items: start;
     padding: 0 0 1.25rem;
     border-bottom: 1px solid hsl(var(--line));
+  }
+
+  .publication-cover {
+    display: block;
+    width: 100%;
+    height: auto;
+    /* height:auto overrides the width/height attributes, so the box computed
+       to 0 before load — a lazy image with no height never intersects the
+       viewport and never fires. Covers are 3:4; reserving the ratio fixes
+       both the missing loads and the layout shift. */
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border: 1px solid hsl(var(--line));
+    border-radius: 0.15rem;
+    background: hsl(var(--surface-raised));
+  }
+
+  /* Reads as a designed plate rather than a pending image: a coloured header
+     band echoing a journal masthead, with the venue monogram below. */
+  .publication-cover--plate {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: hsl(var(--surface));
+  }
+
+  .publication-cover-band {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 34%;
+    background: hsl(var(--accent));
+  }
+
+  .publication-cover-monogram {
+    position: relative;
+    margin-top: 22%;
+    padding: 0 0.15rem;
+    color: hsl(var(--ink));
+    font-family: var(--app-font-mono);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    text-align: center;
+    word-break: break-all;
+  }
+
+  @media (max-width: 640px) {
+    .publication-entry {
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+      gap: 0.85rem;
+    }
   }
 
   .publication-entry + .publication-entry {
@@ -1317,10 +1434,14 @@
   .equipment-card > img {
     display: block;
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 1 / 1;
     border: 1px solid hsl(var(--line));
     border-radius: 0.2rem;
     object-fit: cover;
+    /* Instruments sit centre-frame; bias slightly up so bench clutter at the
+       bottom of the shot is what gets cropped. */
+    object-position: center 40%;
+    background: hsl(var(--surface-raised));
   }
 
   .equipment-accent {
@@ -1352,6 +1473,7 @@
   }
 
   .equipment-description {
+    flex: 1;
     margin: 0.75rem 0 2rem;
     color: hsl(var(--ink-muted));
     font-size: 0.92rem;
@@ -1359,12 +1481,12 @@
   }
 
   .equipment-funding {
-    margin: auto 0 0;
+    margin: 0;
     padding-top: 0.9rem;
     border-top: 1px solid hsl(var(--line));
     color: hsl(var(--ink-muted));
     font-family: var(--app-font-mono);
-    font-size: 0.58rem;
+    font-size: 0.66rem;
     letter-spacing: 0.06em;
     line-height: 1.5;
     text-transform: uppercase;
@@ -1589,7 +1711,7 @@
   .talk-number {
     color: hsl(var(--accent));
     font-family: var(--app-font-mono);
-    font-size: 0.64rem;
+    font-size: 0.7rem;
     letter-spacing: 0.07em;
     line-height: 1.5;
     text-transform: uppercase;
@@ -1947,7 +2069,7 @@
     margin: 0.45rem 0 0;
     color: hsl(var(--ink-muted));
     font-family: var(--app-font-mono);
-    font-size: 0.59rem;
+    font-size: 0.67rem;
     letter-spacing: 0.035em;
     line-height: 1.45;
     text-transform: uppercase;
@@ -2023,16 +2145,11 @@
     overflow: hidden;
   }
 
-  .home-hero-section::before {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(hsl(var(--line-inverse) / 0.12) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--line-inverse) / 0.12) 1px, transparent 1px);
-    background-size: 72px 72px;
-    content: "";
-    mask-image: radial-gradient(ellipse at center, black 0%, transparent 75%);
-    pointer-events: none;
+  /* The hero sits directly under the fixed header, so it needs far less top
+     padding than a mid-page band. --section-y left ~117px of dead green
+     above the headline. */
+  .home-hero-section .section-inner {
+    padding-top: clamp(1.5rem, 3vw, 2.75rem);
   }
 
   .home-hero-grid {
@@ -2055,7 +2172,7 @@
     border-radius: 999px;
     color: hsl(var(--ink-inverse-muted));
     font-family: var(--app-font-mono);
-    font-size: 0.62rem;
+    font-size: 0.69rem;
     letter-spacing: 0.08em;
     line-height: 1.4;
     text-transform: uppercase;
@@ -2092,7 +2209,7 @@
     border-radius: 999px;
     color: hsl(var(--ink-inverse-muted));
     font-family: var(--app-font-mono);
-    font-size: 0.58rem;
+    font-size: 0.66rem;
     letter-spacing: 0.04em;
     text-transform: uppercase;
   }
@@ -2113,7 +2230,7 @@
     padding: 0.7rem 1rem;
     border: 1px solid transparent;
     font-family: var(--app-font-mono);
-    font-size: 0.62rem;
+    font-size: 0.69rem;
     letter-spacing: 0.045em;
     text-transform: uppercase;
     transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
@@ -2161,14 +2278,17 @@
   }
 
   .hero-figure .figure-surface {
-    min-height: clamp(16rem, 34vw, 29rem);
+    /* Hug the image — a fixed min-height letterboxed wide plates inside a tall
+       white box, leaving most of the card empty. */
+    min-height: 0;
+    padding: clamp(1rem, 2.5vw, 1.75rem);
   }
 
   .figure-frame figcaption {
     margin-top: 0.75rem;
     color: hsl(var(--ink-inverse-muted));
     font-family: var(--app-font-mono);
-    font-size: 0.58rem;
+    font-size: 0.66rem;
     letter-spacing: 0.06em;
     line-height: 1.5;
     text-transform: uppercase;
@@ -2182,7 +2302,7 @@
     border: 1px dashed hsl(var(--line));
     color: hsl(var(--ink-muted));
     font-family: var(--app-font-mono);
-    font-size: 0.56rem;
+    font-size: 0.71rem;
     letter-spacing: 0.08em;
     text-align: center;
   }
@@ -2255,7 +2375,7 @@
 
   .focus-number {
     color: hsl(var(--ink-muted));
-    font-size: 0.62rem;
+    font-size: 0.69rem;
   }
 
   .focus-item h3 {
@@ -2282,7 +2402,7 @@
     margin-top: 2.25rem;
     color: hsl(var(--accent));
     font-family: var(--app-font-mono);
-    font-size: 0.65rem;
+    font-size: 0.71rem;
     letter-spacing: 0.045em;
     text-transform: uppercase;
   }
@@ -2312,10 +2432,29 @@
     transform: translateY(-0.25rem);
   }
 
+  /* Flex rather than the shared grid + place-items: a centred grid item sized
+     with height:100% does not resolve dependably inside an aspect-ratio box
+     that also carries padding, which cropped taller figures. */
   .gateway-card .figure-surface,
   .news-card .figure-surface {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     aspect-ratio: 16 / 9;
     padding: 0.75rem;
+    overflow: hidden;
+  }
+
+  /* max-* with auto dimensions fits any aspect inside the frame without
+     cropping or upscaling, so every frame is the same height and the copy
+     below lines up across the row. */
+  .gateway-card .figure-surface img,
+  .news-card .figure-surface img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
   }
 
   .gateway-card .figure-frame figcaption,
@@ -2335,7 +2474,7 @@
     justify-content: space-between;
     gap: 1rem;
     color: hsl(var(--accent));
-    font-size: 0.65rem;
+    font-size: 0.71rem;
   }
 
   .gateway-card-copy p {
@@ -2392,7 +2531,9 @@
 
   .news-card {
     display: flex;
-    flex: 0 0 min(23rem, 31vw);
+    /* Derived from the rail width so exactly three cards fit between the
+       gutters; the remaining items scroll. Two 1rem gaps across three cards. */
+    flex: 0 0 calc((100% - 2rem) / 3);
     flex-direction: column;
     min-width: 0;
     padding: 0.75rem;
@@ -2432,9 +2573,15 @@
   .news-meta span:last-child {
     max-width: 12rem;
     color: hsl(var(--ink-muted));
-    font-size: 0.55rem;
+    font-size: 0.71rem;
     line-height: 1.4;
     text-align: right;
+  }
+
+  @media (max-width: 1080px) {
+    .news-card {
+      flex-basis: calc((100% - 1rem) / 2);
+    }
   }
 
   @media (max-width: 767px) {
@@ -2462,5 +2609,349 @@
     .news-card {
       flex-basis: 84vw;
     }
+  }
+}
+/* ── Research page ────────────────────────────────────────────── */
+@layer components {
+  /* Pipeline: horizontal stepper on desktop, vertical timeline on mobile. */
+  .pipeline {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0;
+    margin: clamp(2.5rem, 5vw, 4rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pipeline-stage {
+    position: relative;
+    min-width: 0;
+    padding-top: 2.5rem;
+  }
+
+  /* The connecting rail sits behind the nodes. */
+  .pipeline-stage::before {
+    content: '';
+    position: absolute;
+    top: 0.85rem;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: hsl(var(--line));
+  }
+
+  .pipeline-stage:first-child::before { left: 50%; }
+  .pipeline-stage:last-child::before { right: 50%; }
+
+  .pipeline-node {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: grid;
+    place-items: center;
+    width: 1.7rem;
+    height: 1.7rem;
+    border: 1px solid hsl(var(--line));
+    border-radius: 999px;
+    background: hsl(var(--surface));
+    color: hsl(var(--ink-muted));
+    font-family: var(--app-font-mono);
+    font-size: 0.71rem;
+    letter-spacing: 0.04em;
+  }
+
+  .pipeline-copy { padding-inline: 0.75rem; text-align: center; }
+
+  .pipeline-copy h3 {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 560;
+    letter-spacing: -0.01em;
+  }
+
+  .pipeline-copy p {
+    margin: 0.4rem 0 0;
+    color: hsl(var(--ink-muted));
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 860px) {
+    .pipeline {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.75rem;
+    }
+
+    .pipeline-stage {
+      padding: 0 0 0 2.75rem;
+    }
+
+    /* Rail rotates to vertical rather than scrolling sideways. */
+    .pipeline-stage::before {
+      top: 0.5rem;
+      bottom: -1.75rem;
+      left: 0.85rem;
+      right: auto;
+      width: 1px;
+      height: auto;
+    }
+
+    .pipeline-stage:last-child::before { bottom: 50%; }
+    .pipeline-stage:first-child::before { top: 0.85rem; left: 0.85rem; }
+
+    .pipeline-node { top: 0; left: 0; transform: none; }
+    .pipeline-copy { text-align: left; }
+  }
+
+  /* Overview cards — same shape as the home page focus items. */
+  .focus-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 1.5rem 0 clamp(2rem, 4vw, 3rem);
+    border-bottom: 1px solid hsl(var(--line));
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .focus-card:hover { transform: translateY(-2px); }
+
+  .focus-card h3 {
+    max-width: 18ch;
+    margin: 2.5rem 0 0;
+    font-size: clamp(1.2rem, 1.1rem + 0.5vw, 1.7rem);
+    font-weight: 540;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+  }
+
+  .focus-card > p {
+    max-width: 34rem;
+    margin: 1rem 0 0;
+    color: hsl(var(--ink-muted));
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .focus-card-link { margin-top: auto; padding-top: 1.5rem; }
+
+  .tag-row,
+  .tag-column {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tag-column { flex-direction: column; align-items: flex-start; }
+
+  .tag-row li,
+  .tag-column li {
+    padding: 0.2rem 0.6rem;
+    border: 1px solid hsl(var(--line));
+    border-radius: 999px;
+    color: hsl(var(--ink-muted));
+    font-family: var(--app-font-mono);
+    font-size: 0.71rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Detail bands. */
+  .focus-band-grid {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr) minmax(0, 0.95fr);
+    gap: clamp(1.5rem, 3.5vw, 3rem);
+    align-items: start;
+  }
+
+  /* Columns are assigned explicitly rather than reordered: `order` moved the
+     figure into the narrow rail column, squeezing it to 5rem and stretching
+     the rail across the gap. */
+  .focus-band-rail { grid-column: 1; grid-row: 1; }
+  .focus-band-copy { grid-column: 2; grid-row: 1; }
+  .focus-band-figure { grid-column: 3; grid-row: 1; }
+
+  .focus-band-grid--reversed {
+    grid-template-columns: minmax(0, 0.95fr) 5rem minmax(0, 1fr);
+  }
+
+  .focus-band-grid--reversed .focus-band-figure { grid-column: 1; grid-row: 1; }
+  .focus-band-grid--reversed .focus-band-rail { grid-column: 2; grid-row: 1; }
+  .focus-band-grid--reversed .focus-band-copy { grid-column: 3; grid-row: 1; }
+
+  .focus-band-figure { min-width: 0; }
+
+  .focus-band-figure .research-plate { width: 100%; }
+
+  .focus-band-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    color: hsl(var(--accent));
+  }
+
+  .focus-band-copy h2 {
+    margin: 0.75rem 0 0;
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.3rem);
+    font-weight: 540;
+    letter-spacing: -0.035em;
+    line-height: 1.12;
+  }
+
+  .focus-band-copy p {
+    max-width: var(--prose-max);
+    margin: 1.25rem 0 0;
+    color: hsl(var(--ink-muted));
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .focus-band-copy .tag-row { margin-top: 1.75rem; }
+
+  @media (max-width: 900px) {
+    .focus-band-grid,
+    .focus-band-grid--reversed {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* Single column: reset the explicit placement and let source order stand,
+       so the figure always follows its copy. */
+    .focus-band-rail,
+    .focus-band-copy,
+    .focus-band-figure {
+      grid-column: 1;
+      grid-row: auto;
+    }
+
+    .focus-band-rail { flex-direction: row; align-items: center; gap: 1rem; }
+  }
+
+  /* Background concept accordion. */
+  .concept-accordion { margin-top: clamp(2rem, 4vw, 3rem); }
+
+  .concept-item { border-bottom: 1px solid hsl(var(--line)); }
+
+  .concept-trigger {
+    padding: 1.25rem 0;
+    text-align: left;
+    text-decoration: none;
+  }
+
+  .concept-trigger:hover,
+  .concept-trigger:hover .concept-title,
+  .concept-trigger:hover .eyebrow {
+    text-decoration: none;
+  }
+
+  .concept-trigger:hover .concept-title { color: hsl(var(--accent)); }
+
+  .concept-trigger-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    color: hsl(var(--accent));
+  }
+
+  .concept-trigger-inner .eyebrow { display: block; }
+
+  .concept-title {
+    display: block;
+    margin-top: 0.4rem;
+    color: hsl(var(--ink));
+    font-size: clamp(1.05rem, 1rem + 0.35vw, 1.3rem);
+    font-weight: 540;
+    letter-spacing: -0.025em;
+  }
+
+  .concept-content p {
+    max-width: var(--prose-max);
+    margin: 0 0 1rem;
+    padding-left: 2.35rem;
+    color: hsl(var(--ink-muted));
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  /* Figure plates: journal images on white — contained, never cropped. */
+  .research-plate {
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    border: 1px solid hsl(var(--line));
+    background: hsl(var(--surface));
+    padding: clamp(0.7rem, 2vw, 1.15rem);
+  }
+
+  .research-plate img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 22rem;
+    object-fit: contain;
+  }
+
+  .figure-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .research-figure {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .figure-grid .research-plate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+
+  .figure-grid .research-plate img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .research-figure figcaption {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    margin-top: 0.85rem;
+  }
+
+  .research-figure-caption {
+    display: block;
+    flex: 1;
+    color: hsl(var(--ink));
+    font-size: 0.88rem;
+    line-height: 1.55;
+  }
+
+  .research-figure-meta {
+    display: block;
+    margin-top: 0.4rem;
+    color: hsl(var(--ink-muted));
+    font-family: var(--app-font-mono);
+    font-size: 0.71rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 900px) {
+    .figure-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 620px) {
+    .figure-grid { grid-template-columns: minmax(0, 1fr); }
   }
 }

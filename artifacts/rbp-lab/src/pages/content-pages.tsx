@@ -7,6 +7,7 @@ import { EQUIPMENT } from '@/data/equipment';
 import { GALLERY_IMAGES } from '@/data/gallery';
 import { NEWS_ITEMS } from '@/data/news';
 import { PUBLICATIONS, type Publication, type PublicationType } from '@/data/publications';
+import { coverFor } from '@/data/journals';
 
 const publicationTypeLabels: Record<PublicationType, string> = {
   journals: 'Journal Publications',
@@ -33,13 +34,71 @@ function PublicationsFilter({ selected, onToggle }: { selected: Set<PublicationT
         <div className="filter-menu">
           {publicationTypeOrder.map((type) => (
             <label className="filter-option" key={type}>
-              <input type="checkbox" checked={selected.has(type)} onChange={() => onToggle(type)} />
+              <input
+                type="checkbox"
+                id={`publication-filter-${type}`}
+                name={`publication-filter-${type}`}
+                checked={selected.has(type)}
+                onChange={() => onToggle(type)}
+              />
               <span>{publicationTypeLabels[type]}</span>
             </label>
           ))}
         </div>
       ) : null}
     </div>
+  );
+}
+
+const SKIP_WORDS = new Set(['and', 'of', 'to', 'in', 'the', 'for', 'on', 'a']);
+
+/**
+ * A short monogram for a venue: "Nucleic Acids Research" -> "NAR".
+ * Venues that are already acronyms are kept as-is.
+ */
+function monogram(venue: string): string {
+  const cleaned = venue.replace(/[–—-]/g, ' ').trim();
+  if (/^[A-Z0-9]{2,5}$/.test(cleaned)) return cleaned;
+
+  const initials = cleaned
+    .split(/\s+/)
+    .filter((word) => word && !SKIP_WORDS.has(word.toLowerCase()))
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase();
+
+  return initials.slice(0, 4) || cleaned.slice(0, 3).toUpperCase();
+}
+
+function PublicationCover({ venue }: { venue: string }) {
+  const [failed, setFailed] = useState(false);
+  const src = coverFor(venue);
+
+  // No cover art held, or the CDN stopped serving one. A monogram plate reads
+  // as a deliberate stand-in rather than an image that failed to load.
+  if (!src || failed) {
+    return (
+      <div className="publication-cover publication-cover--plate" role="img" aria-label={venue}>
+        <span className="publication-cover-band" aria-hidden="true" />
+        <span className="publication-cover-monogram" aria-hidden="true">{monogram(venue)}</span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      className="publication-cover"
+      src={src}
+      alt={`Cover of ${venue}`}
+      loading="lazy"
+      decoding="async"
+      width="300"
+      height="400"
+      // The CDN path is undocumented, so fall back rather than leave a broken
+      // image if it ever stops resolving.
+      onError={() => setFailed(true)}
+      referrerPolicy="no-referrer"
+    />
   );
 }
 
@@ -65,12 +124,15 @@ function PublicationGroup({ type, publications }: { type: PublicationType; publi
           <div className="publication-entries stagger-list">
             {entries.map((publication) => (
               <article className="publication-entry" key={publication.id}>
-                <h3>{publication.citation}</h3>
-                <p>
-                  {publication.venue} · {publication.year}
-                  {publication.doi ? <> · <a href={`https://${publication.doi}`} target="_blank" rel="noopener noreferrer">{publication.doi}</a></> : null}
-                  {publication.extra ? <> · {publication.extra}</> : null}
-                </p>
+                <PublicationCover venue={publication.venue} />
+                <div className="publication-entry-copy">
+                  <h3>{publication.citation}</h3>
+                  <p>
+                    {publication.venue} · {publication.year}
+                    {publication.doi ? <> · <a href={`https://${publication.doi}`} target="_blank" rel="noopener noreferrer">{publication.doi}</a></> : null}
+                    {publication.extra ? <> · {publication.extra}</> : null}
+                  </p>
+                </div>
               </article>
             ))}
           </div>
@@ -110,7 +172,15 @@ export function PublicationsPage() {
           <label className="search-field">
             <span className="sr-only">Search publications</span>
             <Search size={16} aria-hidden="true" />
-            <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search publications" />
+            <input
+              type="search"
+              id="publication-search"
+              name="publication-search"
+              autoComplete="off"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search publications"
+            />
           </label>
           <PublicationsFilter selected={selected} onToggle={toggleType} />
         </div>
