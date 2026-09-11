@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ArrowLeft, ArrowRight, ArrowUpRight, Dna, Linkedin, Network, RefreshCw, ScanLine } from 'lucide-react';
 import { EmptyPage, PageHeader, Section, SectionHeader, SectionNav } from '@/components/page-patterns';
+import { CollaboratorsPage, EquipmentPage, GalleryPage, NewsPage, PublicationsPage } from '@/pages/content-pages';
 import { SiteShell } from '@/components/site-shell';
 import NotFound from '@/pages/not-found';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
@@ -534,22 +535,6 @@ function Home() {
   );
 }
 
-function PrincipalInvestigator() {
-  return (
-    <>
-      <EmptyPage title="Principal Investigator: Prof. Kusum K Singh" />
-      <section className="page-width profile-grid" aria-labelledby="profile-heading">
-        <div className="profile-mark" aria-hidden="true" data-testid="profile-mark" />
-        <div className="profile-copy">
-          <div className="eyebrow">Principal Investigator</div>
-          <h2 id="profile-heading" data-testid="text-principal-investigator-name">Prof. Kusum K Singh</h2>
-          <p className="profile-affiliation" data-testid="text-principal-investigator-affiliation">Department of Biosciences and Bioengineering<br />IIT Guwahati</p>
-        </div>
-      </section>
-    </>
-  );
-}
-
 function Router() {
   return (
     <RoutedErrorBoundary>
@@ -559,11 +544,11 @@ function Router() {
           <Route path="/research">{() => <EmptyPage title="Research" />}</Route>
           <Route path="/members" component={Members} />
           <Route path="/members/kusum-k-singh" component={FacultyProfile} />
-          <Route path="/publications">{() => <EmptyPage title="Publications" />}</Route>
-          <Route path="/news">{() => <EmptyPage title="News" />}</Route>
-          <Route path="/equipment">{() => <EmptyPage title="Equipment" />}</Route>
-          <Route path="/collaborators">{() => <EmptyPage title="Collaborators" />}</Route>
-          <Route path="/gallery">{() => <EmptyPage title="Gallery" />}</Route>
+          <Route path="/publications" component={PublicationsPage} />
+          <Route path="/news" component={NewsPage} />
+          <Route path="/equipment" component={EquipmentPage} />
+          <Route path="/collaborators" component={CollaboratorsPage} />
+          <Route path="/gallery" component={GalleryPage} />
           <Route path="/contact">{() => <EmptyPage title="Contact" />}</Route>
           <Route component={NotFound} />
         </Switch>
