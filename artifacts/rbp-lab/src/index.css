@@ -733,6 +733,329 @@
 }
 
 @layer components {
+  .faculty-header-section .section-inner {
+    padding-top: clamp(4rem, 9vw, 8rem);
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+  }
+
+  .faculty-header-grid {
+    display: grid;
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: clamp(2rem, 7vw, 7rem);
+    align-items: center;
+  }
+
+  .member-portrait.faculty-portrait {
+    width: 13rem;
+    max-width: 100%;
+    aspect-ratio: 1;
+  }
+
+  .faculty-header-copy {
+    max-width: 58rem;
+  }
+
+  .faculty-header-copy h1 {
+    margin: 1rem 0 0;
+    color: hsl(var(--ink));
+    font-size: clamp(2.7rem, 6vw, 6.25rem);
+    font-weight: 540;
+    letter-spacing: -0.075em;
+    line-height: 0.94;
+  }
+
+  .faculty-header-copy p {
+    max-width: 52rem;
+    margin: 1.5rem 0 0;
+    color: hsl(var(--ink-muted));
+    font-size: clamp(1rem, 0.94rem + 0.2vw, 1.15rem);
+    line-height: 1.65;
+  }
+
+  .faculty-nav-wrap {
+    margin-top: clamp(3.5rem, 7vw, 6rem);
+    padding-top: 1rem;
+    border-top: 1px solid hsl(var(--line));
+  }
+
+  .faculty-nav-wrap .section-nav {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .faculty-nav-wrap .section-nav-link {
+    border-bottom: 0;
+  }
+
+  .faculty-section .section-inner {
+    padding-top: clamp(4rem, 8vw, 7rem);
+    padding-bottom: clamp(4rem, 8vw, 7rem);
+  }
+
+  .profile-section-heading {
+    max-width: 50rem;
+  }
+
+  .profile-section-heading h2 {
+    max-width: 17ch;
+    margin: 1rem 0 0;
+    font-size: clamp(2.2rem, 4.4vw, 4.8rem);
+    font-weight: 540;
+    letter-spacing: -0.07em;
+    line-height: 0.96;
+  }
+
+  .profile-section-heading p {
+    max-width: 42rem;
+    margin: 1.25rem 0 0;
+    color: hsl(var(--ink-muted));
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .timeline {
+    position: relative;
+    display: grid;
+    gap: 0;
+    max-width: 62rem;
+    margin: clamp(3rem, 6vw, 5rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .timeline::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 11rem;
+    width: 1px;
+    background: hsl(var(--line));
+    content: "";
+  }
+
+  .timeline-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: 1.5rem;
+    padding: 1.5rem 0 1.5rem 1.5rem;
+    border-top: 1px solid hsl(var(--line));
+  }
+
+  .timeline-item:last-child {
+    border-bottom: 1px solid hsl(var(--line));
+  }
+
+  .timeline-item::before {
+    position: absolute;
+    top: 1.85rem;
+    left: calc(11rem - 0.2rem);
+    width: 0.4rem;
+    height: 0.4rem;
+    border: 1px solid hsl(var(--accent));
+    border-radius: 50%;
+    background: hsl(var(--surface));
+    content: "";
+    transform: translateX(-50%);
+  }
+
+  .section-band--raised .timeline-item::before {
+    background: hsl(var(--surface-raised));
+  }
+
+  .timeline-period,
+  .course-code,
+  .talk-number {
+    color: hsl(var(--accent));
+    font-family: var(--app-font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.07em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  .timeline-entry h3,
+  .timeline-entry p,
+  .course-row h3,
+  .course-row p,
+  .talk-row h3,
+  .talk-row p {
+    margin: 0;
+  }
+
+  .timeline-entry h3,
+  .course-row h3,
+  .talk-row h3 {
+    font-size: clamp(1rem, 0.94rem + 0.15vw, 1.12rem);
+    font-weight: 560;
+    letter-spacing: -0.02em;
+    line-height: 1.35;
+  }
+
+  .timeline-entry p,
+  .course-row p,
+  .talk-row p {
+    margin-top: 0.45rem;
+    color: hsl(var(--ink-muted));
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  .timeline-item--description-only .timeline-entry p {
+    margin-top: 0;
+  }
+
+  .profile-columns {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+    max-width: 62rem;
+    margin-top: clamp(3rem, 6vw, 5rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid hsl(var(--line));
+  }
+
+  .profile-column ul {
+    display: grid;
+    gap: 0.75rem;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .profile-column li {
+    padding-left: 0.75rem;
+    border-left: 1px solid hsl(var(--accent));
+    color: hsl(var(--ink-muted));
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  .course-list,
+  .talk-list {
+    display: grid;
+    max-width: 68rem;
+    margin-top: clamp(3rem, 6vw, 5rem);
+  }
+
+  .course-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(2rem, 6vw, 6rem);
+  }
+
+  .course-row,
+  .talk-row {
+    display: grid;
+    gap: 1rem;
+    border-top: 1px solid hsl(var(--line));
+  }
+
+  .course-row {
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    padding: 1.25rem 0;
+  }
+
+  .course-row:last-child,
+  .course-row:nth-last-child(2) {
+    border-bottom: 1px solid hsl(var(--line));
+  }
+
+  .talk-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(2rem, 6vw, 6rem);
+  }
+
+  .talk-row {
+    grid-template-columns: 2rem minmax(0, 1fr);
+    padding: 1.25rem 0;
+  }
+
+  .talk-row:nth-last-child(-n + 2) {
+    border-bottom: 1px solid hsl(var(--line));
+  }
+
+  .talk-number {
+    color: hsl(var(--ink-muted));
+  }
+
+  .faculty-closing .section-inner {
+    padding-block: 2.25rem;
+  }
+
+  .faculty-closing p {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin: 0;
+    color: hsl(var(--ink-muted));
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .faculty-closing svg {
+    color: hsl(var(--accent));
+  }
+
+  .faculty-closing a {
+    color: hsl(var(--accent));
+  }
+
+  .faculty-closing a:hover {
+    color: hsl(var(--ink));
+  }
+
+  @media (max-width: 767px) {
+    .faculty-header-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .member-portrait.faculty-portrait {
+      width: min(13rem, 70vw);
+    }
+
+    .faculty-nav-wrap .section-nav {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .timeline::before {
+      left: 0.2rem;
+    }
+
+    .timeline-item {
+      grid-template-columns: 1fr;
+      gap: 0.6rem;
+      padding-left: 1.25rem;
+    }
+
+    .timeline-item::before {
+      top: 1.7rem;
+      left: 0.2rem;
+    }
+
+    .profile-columns,
+    .course-list,
+    .talk-list {
+      grid-template-columns: 1fr;
+    }
+
+    .course-row:last-child {
+      border-bottom: 1px solid hsl(var(--line));
+    }
+
+    .course-row:nth-last-child(2),
+    .talk-row:nth-last-child(-n + 2) {
+      border-bottom: 0;
+    }
+
+    .talk-row:last-child {
+      border-bottom: 1px solid hsl(var(--line));
+    }
+  }
+}
+
+@layer components {
   .page-header-lede {
     max-width: 40rem;
     margin: 1.5rem 0 0;

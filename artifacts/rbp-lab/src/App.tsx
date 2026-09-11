@@ -4,8 +4,7 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ArrowLeft, ArrowRight, ArrowUpRight, Dna, Linkedin, Network, RefreshCw, ScanLine } from 'lucide-react';
-import { EmptyPage, Section, SectionHeader } from '@/components/page-patterns';
-import { PageHeader, SectionNav } from '@/components/page-patterns';
+import { EmptyPage, PageHeader, Section, SectionHeader, SectionNav } from '@/components/page-patterns';
 import { SiteShell } from '@/components/site-shell';
 import NotFound from '@/pages/not-found';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
@@ -155,12 +154,12 @@ const interns: Member[] = [
   { name: 'Abhiram Ganji', role: 'Summer Intern · Data Science & AI', slug: 'abhiram-ganji' },
 ];
 
-function PortraitFrame({ member, featured = false }: { member: Member; featured?: boolean }) {
+function PortraitFrame({ member, featured = false, className = '' }: { member: Member; featured?: boolean; className?: string }) {
   const [missing, setMissing] = useState(false);
   const alt = `Portrait of ${member.name}`;
 
   return (
-    <div className={`member-portrait ${featured ? 'member-portrait--featured' : ''}`.trim()}>
+    <div className={`member-portrait ${featured ? 'member-portrait--featured' : ''} ${className}`.trim()}>
       {missing ? (
         <div className="member-portrait-blank" role="img" aria-label={`${alt}. Image not available.`} />
       ) : (
@@ -255,6 +254,185 @@ function Members() {
         <div className="members-grid">
           {interns.map((member) => <MemberCard member={member} key={member.slug} />)}
         </div>
+      </Section>
+    </>
+  );
+}
+
+type TimelineEntry = {
+  period: string;
+  title?: string;
+  detail: string;
+  descriptionOnly?: boolean;
+};
+
+function TimelineItem({ entry }: { entry: TimelineEntry }) {
+  return (
+    <li className={`timeline-item ${entry.descriptionOnly ? 'timeline-item--description-only' : ''}`.trim()}>
+      <div className="timeline-period">{entry.period}</div>
+      <div className="timeline-entry">
+        {entry.descriptionOnly ? <p>{entry.detail}</p> : (
+          <>
+            <h3>{entry.title}</h3>
+            <p>{entry.detail}</p>
+          </>
+        )}
+      </div>
+    </li>
+  );
+}
+
+function Timeline({ entries }: { entries: TimelineEntry[] }) {
+  return (
+    <ol className="timeline">
+      {entries.map((entry, index) => <TimelineItem entry={entry} key={`${entry.period}-${index}`} />)}
+    </ol>
+  );
+}
+
+const placeholderEducation: TimelineEntry[] = [
+  { period: 'PERIOD', title: 'PLACEHOLDER — education entry 1', detail: 'Verified degree and institution will be added here.' },
+  { period: 'PERIOD', title: 'PLACEHOLDER — education entry 2', detail: 'Verified degree and institution will be added here.' },
+  { period: 'PERIOD', title: 'PLACEHOLDER — education entry 3', detail: 'Verified degree and institution will be added here.' },
+];
+
+const placeholderExperience: TimelineEntry[] = [
+  { period: 'PERIOD', title: 'PLACEHOLDER — experience entry 1', detail: 'Verified role and institution will be added here.' },
+  { period: 'PERIOD', title: 'PLACEHOLDER — experience entry 2', detail: 'Verified role and institution will be added here.' },
+  { period: 'PERIOD', title: 'PLACEHOLDER — experience entry 3', detail: 'Verified role and institution will be added here.' },
+];
+
+const placeholderAwards: TimelineEntry[] = [
+  { period: 'YEAR', detail: 'PLACEHOLDER — award or fellowship entry 1', descriptionOnly: true },
+  { period: 'YEAR', detail: 'PLACEHOLDER — award or fellowship entry 2', descriptionOnly: true },
+  { period: 'YEAR', detail: 'PLACEHOLDER — award or fellowship entry 3', descriptionOnly: true },
+];
+
+const placeholderCourses = [
+  { code: 'CODE', title: 'PLACEHOLDER — course entry 1', details: 'L-T-P-C · TERM' },
+  { code: 'CODE', title: 'PLACEHOLDER — course entry 2', details: 'L-T-P-C · TERM' },
+  { code: 'CODE', title: 'PLACEHOLDER — course entry 3', details: 'L-T-P-C · TERM' },
+];
+
+const placeholderTalks = [
+  { number: 33, title: 'PLACEHOLDER — invited talk entry 1', details: 'VENUE · DATE' },
+  { number: 32, title: 'PLACEHOLDER — invited talk entry 2', details: 'VENUE · DATE' },
+  { number: 31, title: 'PLACEHOLDER — invited talk entry 3', details: 'VENUE · DATE' },
+];
+
+function PlaceholderColumns() {
+  const columns = [
+    { label: 'Visiting Faculty', items: ['PLACEHOLDER — entry 1', 'PLACEHOLDER — entry 2'] },
+    { label: 'Collaborations', items: ['PLACEHOLDER — entry 1', 'PLACEHOLDER — entry 2', 'PLACEHOLDER — entry 3'] },
+    { label: 'Professional Memberships', items: ['PLACEHOLDER — entry 1', 'PLACEHOLDER — entry 2'] },
+  ];
+
+  return (
+    <div className="profile-columns">
+      {columns.map((column) => (
+        <div className="profile-column" key={column.label}>
+          <div className="eyebrow">{column.label}</div>
+          <ul>
+            {column.items.map((item) => <li key={item}>{item}</li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function FacultyProfile() {
+  const pi: Member = { name: 'Prof. Kusum K Singh', role: 'Principal Investigator · Assistant Professor', slug: 'kusum-k-singh' };
+
+  return (
+    <>
+      <Section tone="raised" className="faculty-header-section">
+        <div className="faculty-header-grid">
+          <PortraitFrame member={pi} featured className="faculty-portrait" />
+          <div className="faculty-header-copy">
+            <div className="eyebrow">Faculty Profile</div>
+            <h1>Prof. Kusum K Singh</h1>
+            <p>Assistant Professor, Department of Biosciences and Bioengineering, IIT Guwahati. Principal Investigator, RNA-Binding Proteins Laboratory — post-transcriptional gene regulation, mRNA splicing, and the molecular biology of RNA-binding protein complexes.</p>
+          </div>
+        </div>
+        <div className="faculty-nav-wrap">
+          <SectionNav
+            items={[
+              { label: 'Education', href: '#education' },
+              { label: 'Experience', href: '#experience' },
+              { label: 'Teaching', href: '#teaching' },
+              { label: 'Awards', href: '#awards' },
+              { label: 'Talks', href: '#talks' },
+            ]}
+          />
+        </div>
+      </Section>
+
+      <Section tone="base" id="education" className="faculty-section">
+        <div className="profile-section-heading">
+          <div className="eyebrow">Background</div>
+          <h2>Education</h2>
+        </div>
+        <Timeline entries={placeholderEducation} />
+      </Section>
+
+      <Section tone="raised" id="experience" className="faculty-section">
+        <div className="profile-section-heading">
+          <div className="eyebrow">Career</div>
+          <h2>Professional Experience</h2>
+        </div>
+        <Timeline entries={placeholderExperience} />
+        <PlaceholderColumns />
+      </Section>
+
+      <Section tone="base" id="teaching" className="faculty-section">
+        <div className="profile-section-heading">
+          <div className="eyebrow">Courses</div>
+          <h2>Teaching</h2>
+          <p>Course code, title, credit structure (L-T-P-C), and the term most recently taught.</p>
+        </div>
+        <div className="course-list">
+          {placeholderCourses.map((course) => (
+            <div className="course-row" key={course.title}>
+              <div className="course-code">{course.code}</div>
+              <div>
+                <h3>{course.title}</h3>
+                <p>{course.details}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section tone="raised" id="awards" className="faculty-section">
+        <div className="profile-section-heading">
+          <div className="eyebrow">Recognition</div>
+          <h2>Awards and Fellowships</h2>
+        </div>
+        <Timeline entries={placeholderAwards} />
+      </Section>
+
+      <Section tone="base" id="talks" className="faculty-section">
+        <div className="profile-section-heading">
+          <div className="eyebrow">Dissemination</div>
+          <h2>Invited Talks, Symposia &amp; Conferences</h2>
+          <p>33 entries, most recent first.</p>
+        </div>
+        <div className="talk-list">
+          {placeholderTalks.map((talk) => (
+            <div className="talk-row" key={talk.number}>
+              <div className="talk-number">{talk.number}</div>
+              <div>
+                <h3>{talk.title}</h3>
+                <p>{talk.details}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section tone="sunken" className="faculty-closing">
+        <p><ArrowRight size={16} aria-hidden="true" /> See the <Link href="/members">Members</Link> page for the full RBP Laboratory roster, and <Link href="/publications">Publications</Link> for the complete bibliography.</p>
       </Section>
     </>
   );
@@ -380,7 +558,7 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/research">{() => <EmptyPage title="Research" />}</Route>
           <Route path="/members" component={Members} />
-          <Route path="/members/kusum-k-singh" component={PrincipalInvestigator} />
+          <Route path="/members/kusum-k-singh" component={FacultyProfile} />
           <Route path="/publications">{() => <EmptyPage title="Publications" />}</Route>
           <Route path="/news">{() => <EmptyPage title="News" />}</Route>
           <Route path="/equipment">{() => <EmptyPage title="Equipment" />}</Route>
