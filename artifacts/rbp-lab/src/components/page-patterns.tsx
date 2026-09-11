@@ -11,7 +11,7 @@ type SectionProps = {
 export function Section({ tone = 'base', width = 'content', id, children, className = '' }: SectionProps) {
   return (
     <section className={`section-band section-band--${tone} ${className}`.trim()} id={id}>
-      <div className={`section-inner section-inner--${width}`}>{children}</div>
+      <div className={`section-inner section-inner--${width} reveal-on-scroll`}>{children}</div>
     </section>
   );
 }
@@ -43,7 +43,7 @@ type PageHeaderProps = {
 
 export function PageHeader({ eyebrow = 'RNA-BINDING PROTEINS LABORATORY', title, children }: PageHeaderProps) {
   return (
-    <header className="page-width page-header">
+    <header className="page-width page-header reveal-on-scroll">
       {eyebrow ? <div className="eyebrow">{eyebrow}</div> : null}
       <h1 data-testid={`heading-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{title}</h1>
       {children}

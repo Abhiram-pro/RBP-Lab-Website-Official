@@ -6,6 +6,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { ArrowLeft, ArrowRight, ArrowUpRight, Dna, Linkedin, Network, RefreshCw, ScanLine } from 'lucide-react';
 import { EmptyPage, PageHeader, Section, SectionHeader, SectionNav } from '@/components/page-patterns';
 import { CollaboratorsPage, EquipmentPage, GalleryPage, NewsPage, PublicationsPage } from '@/pages/content-pages';
+import { ContactPage } from '@/pages/contact';
 import { SiteShell } from '@/components/site-shell';
 import NotFound from '@/pages/not-found';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
@@ -479,7 +480,7 @@ function Home() {
           title="Four questions the lab is working on"
           lede="Our programme spans the assembly of ribonucleoprotein complexes, their disruption in disease, and the regulatory consequences downstream."
         />
-        <div className="focus-grid">
+        <div className="focus-grid stagger-list">
           {focusItems.map(({ number, title, description, icon: Icon }) => (
             <article className="focus-item" key={number}>
               <div className="focus-topline">
@@ -496,7 +497,7 @@ function Home() {
 
       <Section tone="raised">
         <SectionHeader eyebrow="Explore the laboratory" title="Start with the work, the people, or the record." />
-        <div className="gateway-grid">
+        <div className="gateway-grid stagger-list">
           {gatewayCards.map((card) => (
             <Link className="gateway-card" href={card.href} key={card.label}>
               <FigureFrame src={card.image} alt={`${card.label} research laboratory image`} />
@@ -517,7 +518,7 @@ function Home() {
             <button type="button" onClick={() => moveNews('next')} aria-label="Next news items"><ArrowRight size={16} aria-hidden="true" /></button>
           </div>
         </div>
-        <div className="news-rail" ref={newsRail} tabIndex={0} aria-label="Lab news">
+        <div className="news-rail stagger-list" ref={newsRail} tabIndex={0} aria-label="Lab news">
           {newsItems.map((item) => (
             <article className="news-card" key={item.headline}>
               <FigureFrame src={item.image} alt="" />
@@ -549,7 +550,7 @@ function Router() {
           <Route path="/equipment" component={EquipmentPage} />
           <Route path="/collaborators" component={CollaboratorsPage} />
           <Route path="/gallery" component={GalleryPage} />
-          <Route path="/contact">{() => <EmptyPage title="Contact" />}</Route>
+          <Route path="/contact" component={ContactPage} />
           <Route component={NotFound} />
         </Switch>
       </SiteShell>

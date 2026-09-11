@@ -1,0 +1,126 @@
+Build the UI for /research. UI AND PLACEHOLDER DATA ONLY — real content is wired in later.
+
+This page needs real, reusable UI elements, not just stacked text blocks. Build the six
+components below as standalone pieces, then compose the page from them.
+
+Data lives in src/data/research.ts with placeholder entries. Placeholder text must be
+obviously fake ("Placeholder focus area one", "Lorem ipsum…"). Do not write realistic
+scientific copy.
+
+### src/data/research.ts
+
+export interface FocusArea {
+  id: string;          // used as the anchor id
+  number: string;      // "01"
+  icon: string;        // lucide icon name, e.g. "Network"
+  eyebrow: string;
+  title: string;
+  summary: string;     // one line, used on the card
+  body: string[];      // paragraphs, used in the detail band
+  imageSrc: string;
+  tags: string[];      // 2–4 short keyword chips
+}
+
+export interface Concept {
+  id: string;
+  icon: string;
+  eyebrow: string;
+  title: string;
+  body: string[];
+}
+
+export interface PipelineStage {
+  id: string;
+  label: string;       // "Transcription"
+  caption: string;     // one short line
+}
+
+export interface ResearchFigure {
+  id: string;
+  src: string;
+  caption: string;
+  meta: string;        // "Confocal microscopy"
+}
+
+export const FOCUS_AREAS: FocusArea[] = [ /* exactly 4 placeholders */ ];
+export const CONCEPTS: Concept[] = [ /* 3 placeholders */ ];
+export const PIPELINE: PipelineStage[] = [ /* 6 placeholders */ ];
+export const FIGURES: ResearchFigure[] = [ /* 6 placeholders */ ];
+
+═══════════════════════════════════════════════
+## COMPONENTS TO BUILD
+═══════════════════════════════════════════════
+
+### 1. <AnchorRail>
+A vertical sticky nav for desktop, pinned to the left of the content at about 12rem wide.
+Each item is a real <a href="#id"> with a small dot marker on a vertical rail. The active
+section's dot fills and its label goes to full weight, driven by IntersectionObserver.
+Below the lg breakpoint it collapses into the horizontal scrolling <SectionNav> from the
+scaffold. Respect scroll-margin-top so targets clear the sticky header.
+
+### 2. <PipelineDiagram>
+A horizontal stepper showing stages of the RNA lifecycle. Each stage: a numbered node on a
+connecting horizontal rule, a label beneath, and a one-line caption below that. Nodes are
+evenly distributed; the connecting line runs behind them. On mobile it rotates to a
+vertical timeline rather than scrolling horizontally. Purely presentational — no click
+targets, no state. Render as an ordered list for semantics.
+
+### 3. <FocusAreaCard>
+Used in the overview grid. Contains: the number in monospace, a lucide icon, the title at
+h3 scale, the one-line summary, a row of keyword chips, and an anchor link "Read more ↓"
+that jumps to that area's detail band further down the page. Hairline top rule, no box.
+On hover the whole card lifts 2px and the icon shifts colour.
+
+### 4. <FocusAreaBand>
+The full detail treatment for one focus area, as a full-width band. Two columns on desktop:
+  - narrow left: the number, the icon, and the keyword chips stacked vertically
+  - wide right: eyebrow, h2, the body paragraphs at lede size, and a figure
+Alternate which side the figure sits on between consecutive bands so the page doesn't read
+as four identical rows. Each band carries the focus area's id as its anchor target.
+
+### 5. <ConceptAccordion>
+An accordion for the background concepts — collapsed by default except the first. Each
+header: icon, eyebrow, and title, with a chevron that rotates 180° on open. Body animates
+height and opacity at --duration-base. Build it on the shadcn Accordion primitive so
+keyboard interaction and aria-expanded are handled. Multiple panels may be open at once.
+
+### 6. <FigureGrid>
+A responsive grid of research figures, 2 columns on tablet and 3 on desktop. Each figure:
+the image in a hairline-bordered frame with a light background and object-contain padding
+(these are scientific plates on white backgrounds, NOT photographs — object-cover crops
+them into nonsense), a caption beneath, and a small mono uppercase meta line. Use <figure>
+and <figcaption>. No lightbox.
+
+═══════════════════════════════════════════════
+## PAGE COMPOSITION
+═══════════════════════════════════════════════
+
+1. PAGE HEADER — <PageHeader> with eyebrow, h1, lede.
+
+2. <AnchorRail> / <SectionNav> — anchors: Overview · Background · the four focus area
+   titles · Figures
+
+3. OVERVIEW band (id="overview") — <SectionHeader>, then a <PipelineDiagram>, then a 2×2
+   grid of <FocusAreaCard>.
+
+4. BACKGROUND band (id="background", tone="raised") — <SectionHeader>, then
+   <ConceptAccordion> constrained to --prose-max.
+
+5. FOUR <FocusAreaBand> sections — one per focus area, alternating tone between "base" and
+   "sunken", alternating the figure side.
+
+6. FIGURES band (id="figures") — <SectionHeader>, then <FigureGrid>.
+
+═══════════════════════════════════════════════
+## CONSTRAINTS
+═══════════════════════════════════════════════
+
+- Use the scaffold's <Section>, <SectionHeader>, <PageHeader> and tokens. No hardcoded
+  colours. Icons come from lucide-react, resolved by name from the data.
+- Every component must render correctly with an empty array, and the grid counts must not
+  assume exactly 4 focus areas.
+- NO scroll-linked scale, opacity, rotation or parallax on any of these sections. An
+  earlier build of this page wrapped each section in a scroll-driven scale/opacity
+  transform and the body text was unreadable while scrolling. Entrance fade only, once.
+- No "Request collaboration", "Download PDF", "Join the lab" or contact CTAs on this page.
+- Do not invent research areas, findings, or figure captions — placeholders stay fake.

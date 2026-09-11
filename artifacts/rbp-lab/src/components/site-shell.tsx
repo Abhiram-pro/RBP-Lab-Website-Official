@@ -1,6 +1,9 @@
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { Menu, X } from 'lucide-react';
+import { CONTACT } from '@/data/contact';
+import { FUNDERS } from '@/data/funders';
+import { Marquee } from '@/components/marquee';
 
 const navigation = [
   { label: 'Home', href: '/' },
@@ -21,6 +24,17 @@ const mobileNavigation = [
   { label: 'Contact', href: '/contact' },
 ];
 
+const footerNavigation = [
+  { label: 'Research', href: '/research' },
+  { label: 'Members', href: '/members' },
+  { label: 'Publications', href: '/publications' },
+  { label: 'News', href: '/news' },
+  { label: 'Equipment', href: '/equipment' },
+  { label: 'Collaborators', href: '/collaborators' },
+  { label: 'Gallery', href: '/gallery' },
+  { label: 'Contact', href: '/contact' },
+];
+
 function isCurrent(location: string, href: string) {
   return href === '/' ? location === '/' : location === href || location.startsWith(`${href}/`);
 }
@@ -28,6 +42,31 @@ function isCurrent(location: string, href: string) {
 export function SiteShell({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [location] = useLocation();
+
+  useEffect(() => {
+    document.documentElement.classList.add('motion-ready');
+    const revealElements = Array.from(document.querySelectorAll<HTMLElement>('.reveal-on-scroll'));
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+      revealElements.forEach((element) => element.classList.add('is-visible'));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.15 },
+    );
+
+    revealElements.forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, [location]);
 
   return (
     <div className="site-shell">
@@ -66,28 +105,35 @@ export function SiteShell({ children }: { children: ReactNode }) {
           </div>
         </div>
       </header>
-      <main className="main-content" id="main-content">{children}</main>
+      <main className="main-content route-content" id="main-content" key={location}>{children}</main>
       <footer className="site-footer">
         <div className="page-width">
-          <div className="footer-grid">
+          <div className="footer-identity">
             <div className="footer-brand">
-              <div className="wordmark">
-                <span className="wordmark-mark" aria-hidden="true">R·B</span>
-                <span className="wordmark-lockup">
-                  <span className="wordmark-text">RBP Lab</span>
-                  <span className="wordmark-subtext">RNA-Binding Proteins</span>
-                </span>
-              </div>
+              <Link className="footer-lab-name" href="/">{CONTACT.labName}</Link>
               <p>Department of Biosciences and Bioengineering<br />IIT Guwahati</p>
+              <div className="footer-contact-links">
+                <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+                <a href={`tel:${CONTACT.phone.replace(/\s+/g, '')}`}>{CONTACT.phone}</a>
+              </div>
             </div>
-            <div className="footer-column" aria-hidden="true" />
-            <div className="footer-column" aria-hidden="true" />
-            <div className="footer-column" aria-hidden="true" />
-            <div className="footer-column" aria-hidden="true" />
+            <nav className="footer-nav" aria-label="Footer navigation">
+              {footerNavigation.map((item) => <Link href={item.href} key={item.href}>{item.label}</Link>)}
+            </nav>
+          </div>
+          <div className="footer-funders">
+            <div className="meta-label">Research support</div>
+            <Marquee speed={28} ariaLabel="Funding partners">
+              {FUNDERS.map((funder) => (
+                <div className="funder-logo" key={funder.id}>
+                  <img src={funder.logoSrc} alt={funder.name} />
+                </div>
+              ))}
+            </Marquee>
           </div>
           <div className="footer-bottom">
-            <span>RBP Laboratory</span>
-            <span>IIT Guwahati</span>
+            <span>© 2026 RNA-Binding Proteins Laboratory, IIT Guwahati. All rights reserved.</span>
+            <span>FUNDING CREDIT · VERIFIED DETAILS PENDING</span>
           </div>
         </div>
       </footer>

@@ -62,7 +62,7 @@ function PublicationGroup({ type, publications }: { type: PublicationType; publi
       {grouped.map(([year, entries]) => (
         <div className="publication-year-group" key={year}>
           <div className="publication-year">{year}</div>
-          <div className="publication-entries">
+          <div className="publication-entries stagger-list">
             {entries.map((publication) => (
               <article className="publication-entry" key={publication.id}>
                 <h3>{publication.citation}</h3>
@@ -131,7 +131,7 @@ export function NewsPage() {
         <p className="page-header-lede">Grants, publications, and milestones from the lab.</p>
       </PageHeader>
       <Section tone="base" className="news-list-section">
-        <ol className="news-list">
+        <ol className="news-list stagger-list">
           {NEWS_ITEMS.map((item, index) => (
             <li className="news-list-item" key={item.id}>
               <div className="news-list-number">{NEWS_ITEMS.length - index}</div>
@@ -157,7 +157,7 @@ export function EquipmentPage() {
       </PageHeader>
       <Section tone="base" className="equipment-section">
         {EQUIPMENT.length === 0 ? <p className="empty-state">No equipment entries yet.</p> : (
-          <div className="equipment-grid">
+          <div className="equipment-grid stagger-list">
             {EQUIPMENT.map((item) => (
               <article className="equipment-card" key={item.id}>
                 <img src={item.imageSrc} alt="" />
@@ -189,7 +189,7 @@ export function CollaboratorsPage() {
       </PageHeader>
       <Section tone="base" className="collaborators-section">
         {COLLABORATORS.length === 0 ? <p className="empty-state">No collaborators yet.</p> : (
-          <div className="collaborators-grid">
+          <div className="collaborators-grid stagger-list">
             {COLLABORATORS.map((collaborator) => (
               <article className="collaborator-card" key={collaborator.id}>
                 <div className="monogram" style={{ backgroundColor: collaborator.accent }} aria-hidden="true">{initials(collaborator.name)}</div>
@@ -213,7 +213,7 @@ export function GalleryPage() {
       </PageHeader>
       <Section tone="base" className="gallery-section">
         {GALLERY_IMAGES.length === 0 ? <p className="empty-state">No gallery images yet.</p> : (
-          <div className="gallery-grid">
+          <div className="gallery-grid stagger-list">
             {GALLERY_IMAGES.map((image, index) => (
               <GalleryImageFrame image={image} eager={index < 2} key={image.id} />
             ))}
