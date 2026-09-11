@@ -7,27 +7,15 @@ export interface NewsItem {
 
 export const NEWS_ITEMS: NewsItem[] = [
   {
-    id: 'placeholder-news-04',
-    category: 'Publication · Journal Name · 2026',
-    title: 'Placeholder news headline one',
-    description: 'Placeholder description for a publication, grant, or laboratory milestone.',
+    id: 'new-publication-magoh-magohb-paralog-proteomics',
+    category: 'Publication · BBA Gene Regulatory Mechanisms · 2026',
+    title: 'New Publication: MAGOH/MAGOHB Paralog Proteomics',
+    description: 'Rehman, Tamilselvan, Yadav, Chakrabarty, Huesgen & Singh report proteomics uncovering distinct gene-regulatory functions of the MAGOH/MAGOHB paralogs in cell proliferation.',
   },
   {
-    id: 'placeholder-news-03',
-    category: 'Grant · Funding Body · 2025',
-    title: 'Placeholder news headline two',
-    description: 'Placeholder description for a recent laboratory achievement.',
-  },
-  {
-    id: 'placeholder-news-02',
-    category: 'Milestone · Laboratory · 2024',
-    title: 'Placeholder news headline three',
-    description: 'Placeholder description for a department or research milestone.',
-  },
-  {
-    id: 'placeholder-news-01',
-    category: 'Event · Conference Name · 2023',
-    title: 'Placeholder news headline four',
-    description: 'Placeholder description for a talk, conference, or community event.',
+    id: 'crispr-based-method-to-distinguish-magoh-paralog',
+    category: 'Publication · Gene Reports · 2025',
+    title: 'CRISPR-Based Method to Distinguish MAGOH Paralogs',
+    description: 'Rehman, Narwade & Singh publish a CRISPR-based genome-editing approach to endogenously distinguish the paralogs MAGOH and MAGOHB.',
   },
 ];

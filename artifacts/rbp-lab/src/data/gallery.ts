@@ -6,15 +6,91 @@ export interface GalleryImage {
   alt: string;
 }
 
-const PLACEHOLDER_IMAGE = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 3%22%3E%3Crect width=%224%22 height=%223%22 fill=%22%23e7e5df%22/%3E%3C/svg%3E';
-
+/** Intrinsic dimensions are recorded so each frame reserves the right box
+    before the image loads and nothing shifts on arrival. */
 export const GALLERY_IMAGES: GalleryImage[] = [
-  { id: 'placeholder-gallery-01', src: PLACEHOLDER_IMAGE, width: 4, height: 3, alt: 'Placeholder gallery image one' },
-  { id: 'placeholder-gallery-02', src: PLACEHOLDER_IMAGE, width: 3, height: 4, alt: 'Placeholder gallery image two' },
-  { id: 'placeholder-gallery-03', src: PLACEHOLDER_IMAGE, width: 16, height: 9, alt: 'Placeholder gallery image three' },
-  { id: 'placeholder-gallery-04', src: PLACEHOLDER_IMAGE, width: 4, height: 3, alt: 'Placeholder gallery image four' },
-  { id: 'placeholder-gallery-05', src: PLACEHOLDER_IMAGE, width: 3, height: 4, alt: 'Placeholder gallery image five' },
-  { id: 'placeholder-gallery-06', src: PLACEHOLDER_IMAGE, width: 16, height: 9, alt: 'Placeholder gallery image six' },
-  { id: 'placeholder-gallery-07', src: PLACEHOLDER_IMAGE, width: 4, height: 3, alt: 'Placeholder gallery image seven' },
-  { id: 'placeholder-gallery-08', src: PLACEHOLDER_IMAGE, width: 3, height: 4, alt: 'Placeholder gallery image eight' },
+  {
+    id: 'gallery-01',
+    src: '/images/gallery/gallery-01.jpg',
+    width: 5568,
+    height: 3712,
+    alt: 'Photograph 1 from the RNA-Binding Proteins Laboratory at IIT Guwahati',
+  },
+  {
+    id: 'gallery-02',
+    src: '/images/gallery/gallery-02.jpg',
+    width: 4032,
+    height: 3024,
+    alt: 'Photograph 2 from the RNA-Binding Proteins Laboratory at IIT Guwahati',
+  },
+  {
+    id: 'gallery-03',
+    src: '/images/gallery/gallery-03.jpg',
+    width: 4032,
+    height: 3024,
+    alt: 'Photograph 3 from the RNA-Binding Proteins Laboratory at IIT Guwahati',
+  },
+  {
+    id: 'gallery-04',
+    src: '/images/gallery/gallery-04.jpg',
+    width: 4032,
+    height: 3024,
+    alt: 'Photograph 4 from the RNA-Binding Proteins Laboratory at IIT Guwahati',
+  },
+  {
+    id: 'gallery-05',
+    src: '/images/gallery/gallery-05.jpg',
+    width: 1152,
+    height: 864,
+    alt: 'Photograph 5 from the RNA-Binding Proteins Laboratory at IIT Guwahati',
+  },
+  {
+    id: 'gallery-06',
+    src: '/images/gallery/gallery-06.jpg',
+    width: 1152,
+    height: 864,
+    alt: 'Photograph 6 from the RNA-Binding Proteins Laboratory at IIT Guwahati',
+  },
+  {
+    id: 'gallery-07',
+    src: '/images/gallery/gallery-07.jpg',
+    width: 1152,
+    height: 864,
+    alt: 'Photograph 7 from the RNA-Binding Proteins Laboratory at IIT Guwahati',
+  },
+  {
+    id: 'gallery-08',
+    src: '/images/gallery/gallery-08.jpg',
+    width: 4032,
+    height: 3024,
+    alt: 'Photograph 8 from the RNA-Binding Proteins Laboratory at IIT Guwahati',
+  },
+  {
+    id: 'gallery-09',
+    src: '/images/gallery/gallery-09.jpg',
+    width: 1600,
+    height: 1200,
+    alt: 'Photograph 9 from the RNA-Binding Proteins Laboratory at IIT Guwahati',
+  },
+  {
+    id: 'gallery-10',
+    src: '/images/gallery/gallery-10.jpg',
+    width: 1600,
+    height: 1200,
+    alt: 'Photograph 10 from the RNA-Binding Proteins Laboratory at IIT Guwahati',
+  },
+  {
+    id: 'gallery-11',
+    src: '/images/gallery/gallery-11.jpg',
+    width: 1280,
+    height: 960,
+    alt: 'Photograph 11 from the RNA-Binding Proteins Laboratory at IIT Guwahati',
+  },
+  {
+    id: 'gallery-12',
+    src: '/images/gallery/gallery-12.jpg',
+    width: 4032,
+    height: 3024,
+    alt: 'Photograph 12 from the RNA-Binding Proteins Laboratory at IIT Guwahati',
+  },
 ];
