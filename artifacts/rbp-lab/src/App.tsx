@@ -97,37 +97,43 @@ const newsItems = [
     image: '/images/lab/Proteomics.jpeg',
     headline: 'Proteomics uncovers distinct gene-regulatory functions of the MAGOH/MAGOHB paralogs in cell proliferation.',
     year: '2026',
-    venue: 'PUBLICATION · BBA GENE REGULATORY MECHANISMS',
+    kind: 'Publication',
+    venue: 'BBA Gene Regulatory Mechanisms',
   },
   {
     image: '/images/lab/Cas-9_KO_and_Splicing.jpeg',
     headline: 'CRISPR-based genome editing developed to endogenously distinguish the paralogs MAGOH and MAGOHB.',
     year: '2025',
-    venue: 'PUBLICATION · GENE REPORTS',
+    kind: 'Publication',
+    venue: 'Gene Reports',
   },
   {
     image: '/images/lab/Localization_of_MAGOH_delta_37.jpeg',
     headline: 'An EJC-independent novel isoform of MAGOH — MAGOH-Δ37 — identified along with its interactome.',
     year: '2025',
-    venue: 'PUBLICATION · BBRC',
+    kind: 'Publication',
+    venue: 'BBRC',
   },
   {
     image: '/images/lab/IP_Data.jpeg',
     headline: 'BioID proximity mapping reveals novel SAP18 interactions within the prespliceosomal complex.',
     year: '2024',
-    venue: 'PUBLICATION · BBRC',
+    kind: 'Publication',
+    venue: 'BBRC',
   },
   {
     image: '/images/lab/Isoform_Usage.jpeg',
     headline: 'Ongoing ICMR-funded project as Co-PI on genome-wide estrogen-regulated gene expression.',
-    year: 'ICMR',
-    venue: 'FUNDING · CO-PI',
+    year: 'Ongoing',
+    kind: 'Funding · Co-PI',
+    venue: 'ICMR',
   },
   {
     image: '/images/lab/Invasion.jpeg',
     headline: 'RNPS1 identified as an oncogenic splicing factor driving proliferation in cervical cancer cells.',
     year: '2022',
-    venue: 'PUBLICATION · IUBMB',
+    kind: 'Publication',
+    venue: 'IUBMB',
   },
 ];
 
@@ -218,7 +224,7 @@ function RosterSectionHeader({ title, lede }: { title: string; lede?: string }) 
 }
 
 function Members() {
-  const pi: Member = { name: 'Prof. Kusum K Singh', role: 'Principal Investigator · Assistant Professor', slug: 'kusum-k-singh' };
+  const pi: Member = { name: 'Prof. Kusum K. Singh', role: 'Principal Investigator · Assistant Professor', slug: 'kusum-k-singh' };
 
   return (
     <>
@@ -237,7 +243,7 @@ function Members() {
         <PortraitFrame member={pi} featured />
         <div className="pi-feature-copy">
           <div className="eyebrow">Principal Investigator</div>
-          <h2 id="pi-feature-heading"><Link href="/members/kusum-k-singh">Prof. Kusum K Singh</Link></h2>
+          <h2 id="pi-feature-heading"><Link href="/members/kusum-k-singh">Prof. Kusum K. Singh</Link></h2>
           <p className="pi-role">{pi.role}</p>
           <p className="pi-description">Department of Biosciences and Bioengineering, IIT Guwahati — post-transcriptional gene regulation, mRNA splicing, and the molecular biology of RNA-binding protein complexes.</p>
           <div className="pi-actions">
@@ -311,7 +317,7 @@ function ProfileColumns() {
 }
 
 function FacultyProfile() {
-  const pi: Member = { name: 'Prof. Kusum K Singh', role: 'Principal Investigator · Assistant Professor', slug: 'kusum-k-singh' };
+  const pi: Member = { name: 'Prof. Kusum K. Singh', role: 'Principal Investigator · Assistant Professor', slug: 'kusum-k-singh' };
 
   return (
     <>
@@ -320,7 +326,7 @@ function FacultyProfile() {
           <PortraitFrame member={pi} featured className="faculty-portrait" />
           <div className="faculty-header-copy">
             <div className="eyebrow">Faculty Profile</div>
-            <h1>Prof. Kusum K Singh</h1>
+            <h1>Prof. Kusum K. Singh</h1>
             <p>Assistant Professor, Department of Biosciences and Bioengineering, IIT Guwahati. Principal Investigator, RNA-Binding Proteins Laboratory — post-transcriptional gene regulation, mRNA splicing, and the molecular biology of RNA-binding protein complexes.</p>
           </div>
         </div>
@@ -420,9 +426,15 @@ function Home() {
   return (
     <div className="home-page">
       <Section tone="inverse" className="home-hero-section">
+        <h1
+          className="home-hero-title"
+          id="home-heading"
+          data-testid="heading-rna-binding-proteins-laboratory"
+        >
+          <span className="nowrap">RNA-Binding</span> Proteins Laboratory
+        </h1>
         <div className="home-hero-grid">
           <div className="home-hero-copy">
-            <h1 id="home-heading" data-testid="heading-rna-binding-proteins-laboratory">RNA-Binding Proteins Laboratory</h1>
             <p className="home-hero-lede">Investigating the molecular logic of RNA-binding proteins in nonsense-mediated decay, splicing regulation, and gene expression fidelity.</p>
             <div className="keyword-list" aria-label="Research keywords">
               {['Alternative Splicing', 'Splicing', 'Gene Expression', 'EJC Research'].map((tag) => <span key={tag}>{tag}</span>)}
@@ -444,7 +456,7 @@ function Home() {
       <Section tone="base" id="research-focus">
         <SectionHeader
           eyebrow="Research Focus"
-          title="Four questions the lab is working on"
+          title="Four problems the lab is working on"
           lede="Our programme spans the assembly of ribonucleoprotein complexes, their disruption in disease, and the regulatory consequences downstream."
         />
         <div className="focus-grid stagger-list">
@@ -491,8 +503,11 @@ function Home() {
               <FigureFrame src={item.image} alt="" />
               <h3>{item.headline}</h3>
               <div className="news-meta">
-                <span>{item.year}</span>
-                <span>{item.venue}</span>
+                <span className="news-meta-year">{item.year}</span>
+                <span className="news-meta-source">
+                  <span className="news-meta-kind">{item.kind}</span>
+                  <span className="news-meta-venue">{item.venue}</span>
+                </span>
               </div>
             </article>
           ))}

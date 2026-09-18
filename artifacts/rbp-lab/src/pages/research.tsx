@@ -10,8 +10,11 @@ import { CONCEPTS, FIGURES, FOCUS_AREAS, PIPELINE, type FocusArea, type Research
 import {
   Activity,
   ArrowDown,
+  BookOpen,
+  Compass,
   Dna,
   FlaskConical,
+  Images,
   Layers,
   Network,
   Shuffle,
@@ -183,10 +186,14 @@ function FigureGrid({ figures }: { figures: ResearchFigure[] }) {
 
 export function ResearchPage() {
   const navItems = [
-    { label: 'Overview', href: '#overview' },
-    { label: 'Background', href: '#background' },
-    ...FOCUS_AREAS.map((area) => ({ label: area.title, href: `#${area.id}` })),
-    { label: 'Figures', href: '#figures' },
+    { label: 'Overview', href: '#overview', icon: <Compass size={16} strokeWidth={1.4} /> },
+    { label: 'Background', href: '#background', icon: <BookOpen size={16} strokeWidth={1.4} /> },
+    ...FOCUS_AREAS.map((area) => ({
+      label: area.title,
+      href: `#${area.id}`,
+      icon: <Icon name={area.icon} size={16} />,
+    })),
+    { label: 'Figures', href: '#figures', icon: <Images size={16} strokeWidth={1.4} /> },
   ];
 
   return (

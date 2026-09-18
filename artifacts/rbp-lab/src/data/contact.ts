@@ -3,6 +3,9 @@ export interface ContactInfo {
   addressLines: string[];
   email: string;
   phone: string;
+  /** Internal landline extension, dialled from within IITG. */
+  phoneExtension: string;
+  room: string;
   piName: string;
   piTitle: string;
   piProfileUrl: string;
@@ -16,13 +19,15 @@ export const CONTACT: ContactInfo = {
   addressLines: [
     'Department of Biosciences and Bioengineering',
     'Indian Institute of Technology Guwahati',
-    'Academic Complex, Room 3206',
+    'Academic Complex, Room 303',
     'Amingaon, North Guwahati, Assam 781039',
     'India',
   ],
   email: 'kusumsingh@iitg.ac.in',
-  phone: '+91-361-2582250',
-  piName: 'Prof. Kusum K Singh',
+  phone: '+91-361-2583206',
+  phoneExtension: '3206',
+  room: 'Room 303',
+  piName: 'Prof. Kusum K. Singh',
   piTitle: 'Assistant Professor · Department of Biosciences and Bioengineering',
   piProfileUrl: '/members/kusum-k-singh',
   /**

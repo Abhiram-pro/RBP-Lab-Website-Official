@@ -144,6 +144,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <span>© 2026 RNA-Binding Proteins Laboratory, IIT Guwahati. All rights reserved.</span>
             <span>FUNDED BY DBT · DST-SERB · CSIR · ICMR · IIT GUWAHATI</span>
           </div>
+          <p className="footer-credit">Developed and maintained by Abhiram Ganji</p>
         </div>
       </footer>
       <nav className="mobile-tabs" aria-label="Mobile quick navigation">

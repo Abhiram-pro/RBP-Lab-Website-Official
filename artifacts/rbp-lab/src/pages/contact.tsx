@@ -1,58 +1,107 @@
-import { ArrowRight, ExternalLink, Mail, MapPin, Phone } from 'lucide-react';
+import { ArrowRight, Building2, ExternalLink, Mail, MapPin, Phone } from 'lucide-react';
 import { Link } from 'wouter';
-import { CONTACT } from '@/data/contact';
 import { PageHeader, Section } from '@/components/page-patterns';
+import { CONTACT } from '@/data/contact';
+
+/**
+ * One fact per card: icon chip, label, value. Equal-height tiles in a single
+ * grid, so the columns line up instead of each block sizing to its own text.
+ */
+function ContactCard({
+  icon,
+  label,
+  children,
+  href,
+  note,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  children: React.ReactNode;
+  href?: string;
+  note?: string;
+}) {
+  const body = (
+    <>
+      <span className="contact-card-chip" aria-hidden="true">
+        {icon}
+      </span>
+      <span className="contact-card-label">{label}</span>
+      <span className="contact-card-value">{children}</span>
+      {note ? <span className="contact-card-note">{note}</span> : null}
+    </>
+  );
+
+  return href ? (
+    <a className="contact-card contact-card--link" href={href}>
+      {body}
+    </a>
+  ) : (
+    <div className="contact-card">{body}</div>
+  );
+}
 
 export function ContactPage() {
+  const [department, , , locality] = CONTACT.addressLines;
+
   return (
     <>
       <PageHeader eyebrow="RNA-Binding Proteins (RBPs) Laboratory" title="Contact">
-        <p className="page-header-lede">Enquiries about research, collaborations, and student positions are welcome.</p>
+        <p className="page-header-lede">
+          Enquiries about research, collaborations, and student positions are welcome.
+        </p>
       </PageHeader>
 
       <Section tone="base" className="contact-section">
-        <div className="contact-grid">
-          <address className="contact-address">
-            <div className="contact-block">
-              <MapPin size={20} strokeWidth={1.3} aria-hidden="true" />
-              <div>
-                <div className="eyebrow">Visit the lab</div>
-                <div className="contact-address-lines">
-                  {CONTACT.addressLines.map((line) => <span key={line}>{line}</span>)}
-                </div>
-              </div>
-            </div>
+        <div className="contact-cards">
+          <ContactCard
+            icon={<Building2 size={19} strokeWidth={1.4} />}
+            label="Lab location"
+            note={department}
+          >
+            {CONTACT.room}
+          </ContactCard>
 
-            <div className="contact-links">
-              <a href={`mailto:${CONTACT.email}`}>
-                <Mail size={18} strokeWidth={1.3} aria-hidden="true" />
-                <span>
-                  <span className="contact-link-label">Email</span>
-                  {CONTACT.email}
-                </span>
-              </a>
-              <a href={`tel:${CONTACT.phone.replace(/\s+/g, '')}`}>
-                <Phone size={18} strokeWidth={1.3} aria-hidden="true" />
-                <span>
-                  <span className="contact-link-label">Phone</span>
-                  {CONTACT.phone}
-                </span>
-              </a>
-            </div>
-          </address>
+          <ContactCard
+            icon={<Mail size={19} strokeWidth={1.4} />}
+            label="Email"
+            href={`mailto:${CONTACT.email}`}
+            note="Enquiries and collaborations"
+          >
+            {CONTACT.email}
+          </ContactCard>
 
-          <div className="contact-pi">
+          <ContactCard
+            icon={<Phone size={19} strokeWidth={1.4} />}
+            label="Landline"
+            href={`tel:${CONTACT.phone.replace(/[^\d+]/g, '')}`}
+            note={`Extension ${CONTACT.phoneExtension} within IITG`}
+          >
+            {CONTACT.phone}
+          </ContactCard>
+
+          <ContactCard icon={<MapPin size={19} strokeWidth={1.4} />} label="Campus" note={locality}>
+            IIT Guwahati
+          </ContactCard>
+        </div>
+
+        <div className="contact-pi-panel">
+          <div className="contact-pi-copy">
             <div className="eyebrow">Principal Investigator</div>
             <h2>{CONTACT.piName}</h2>
             <p>{CONTACT.piTitle}</p>
-            <div className="contact-pi-links">
-              <Link className="text-link" href={CONTACT.piProfileUrl}>
-                View faculty profile <ArrowRight size={15} aria-hidden="true" />
-              </Link>
-              <a className="text-link" href={CONTACT.piExternalUrl} target="_blank" rel="noopener noreferrer">
-                Institutional profile <ExternalLink size={14} aria-hidden="true" />
-              </a>
-            </div>
+          </div>
+          <div className="contact-pi-links">
+            <Link className="text-link" href={CONTACT.piProfileUrl}>
+              View faculty profile <ArrowRight size={15} aria-hidden="true" />
+            </Link>
+            <a
+              className="text-link"
+              href={CONTACT.piExternalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Institutional profile <ExternalLink size={14} aria-hidden="true" />
+            </a>
           </div>
         </div>
 
@@ -64,7 +113,10 @@ export function ContactPage() {
             allowFullScreen
             referrerPolicy="no-referrer-when-downgrade"
           />
-          <figcaption>{CONTACT.addressLines.join(' · ')}</figcaption>
+          <figcaption>
+            <MapPin size={14} strokeWidth={1.5} aria-hidden="true" />
+            <address>{CONTACT.addressLines.join(' · ')}</address>
+          </figcaption>
         </figure>
       </Section>
     </>

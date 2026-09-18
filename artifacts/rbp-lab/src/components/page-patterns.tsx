@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react';
+import { ArrowUpRight } from 'lucide-react';
 
 type SectionProps = {
   tone?: 'base' | 'raised' | 'sunken' | 'inverse';
@@ -54,17 +55,35 @@ export function PageHeader({ eyebrow = 'RNA-BINDING PROTEINS LABORATORY', title,
 type SectionNavItem = {
   label: string;
   href: string;
+  /** Optional glyph for the tile rail. Callers own their own icon set. */
+  icon?: ReactNode;
 };
 
 export function SectionNav({ items }: { items: SectionNavItem[] }) {
   return (
     <nav className="section-nav" aria-label="Page sections">
-      {items.map((item, index) => (
-        <a className="section-nav-link" href={item.href} data-testid={`link-section-${item.label.toLowerCase()}`} key={item.href}>
-          <span>{item.label}</span>
-          <span className="section-nav-index">{String(index + 1).padStart(2, '0')}</span>
-        </a>
-      ))}
+      {items.map((item, index) => {
+        const ordinal = String(index + 1).padStart(2, '0');
+        return (
+          <a
+            className="section-nav-link"
+            href={item.href}
+            data-testid={`link-section-${item.label.toLowerCase()}`}
+            key={item.href}
+          >
+            <span className="section-nav-rail">
+              <span className="section-nav-index">{ordinal}</span>
+              {item.icon ? (
+                <span className="section-nav-icon" aria-hidden="true">
+                  {item.icon}
+                </span>
+              ) : null}
+            </span>
+            <span className="section-nav-label">{item.label}</span>
+            <ArrowUpRight className="section-nav-arrow" size={14} aria-hidden="true" />
+          </a>
+        );
+      })}
     </nav>
   );
 }

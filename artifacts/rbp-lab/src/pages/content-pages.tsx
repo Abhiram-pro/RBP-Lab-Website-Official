@@ -1,12 +1,24 @@
-import { useMemo, useState } from 'react';
-import { ArrowRight, ChevronDown, Filter, Search } from 'lucide-react';
+import { useMemo, useState, type CSSProperties } from 'react';
+import {
+  ArrowRight,
+  Award,
+  ChevronDown,
+  Filter,
+  GraduationCap,
+  Mic,
+  Presentation,
+  Search,
+  Users,
+  type LucideIcon,
+} from 'lucide-react';
 import { Link } from 'wouter';
 import { PageHeader, Section } from '@/components/page-patterns';
-import { COLLABORATORS } from '@/data/collaborators';
+import { COLLABORATORS, type Collaborator } from '@/data/collaborators';
 import { EQUIPMENT } from '@/data/equipment';
 import { GALLERY_IMAGES } from '@/data/gallery';
 import { NEWS_ITEMS } from '@/data/news';
 import { PUBLICATIONS, type Publication, type PublicationType } from '@/data/publications';
+import { CONFERENCES, CONFERENCE_YEARS, type ConferenceKind } from '@/data/conferences';
 import { coverFor } from '@/data/journals';
 
 const publicationTypeLabels: Record<PublicationType, string> = {
@@ -70,17 +82,59 @@ function monogram(venue: string): string {
   return initials.slice(0, 4) || cleaned.slice(0, 3).toUpperCase();
 }
 
+/** Stable 0-359 hue from the venue, so each journal keeps its own plate. */
+function venueHue(venue: string): number {
+  let hash = 0;
+  for (let i = 0; i < venue.length; i += 1) hash = (hash * 31 + venue.charCodeAt(i)) | 0;
+  return Math.abs(hash) % 360;
+}
+
+/** Backbone-and-bases motif, echoing a single RNA strand. */
+function StrandMotif() {
+  const bases = [0, 1, 2, 3, 4, 5, 6, 7];
+  return (
+    <svg className="cover-plate-motif" viewBox="0 0 120 160" aria-hidden="true" focusable="false">
+      <path
+        d="M14 4 C 46 30, -18 58, 14 84 C 46 110, -18 138, 14 164"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      {bases.map((index) => {
+        const y = 12 + index * 20;
+        return (
+          <g key={index}>
+            <line x1="16" y1={y} x2={38 + (index % 3) * 9} y2={y} stroke="currentColor" strokeWidth="1.2" />
+            <circle cx={42 + (index % 3) * 9} cy={y} r="2.6" fill="currentColor" />
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
 function PublicationCover({ venue }: { venue: string }) {
   const [failed, setFailed] = useState(false);
   const src = coverFor(venue);
 
-  // No cover art held, or the CDN stopped serving one. A monogram plate reads
-  // as a deliberate stand-in rather than an image that failed to load.
+  // No cover art held, or the CDN stopped serving one. A designed plate — the
+  // venue's own accent, a strand motif, the monogram and the full title —
+  // reads as a deliberate stand-in rather than an image that failed to load.
   if (!src || failed) {
     return (
-      <div className="publication-cover publication-cover--plate" role="img" aria-label={venue}>
-        <span className="publication-cover-band" aria-hidden="true" />
-        <span className="publication-cover-monogram" aria-hidden="true">{monogram(venue)}</span>
+      <div
+        className="publication-cover publication-cover--plate"
+        role="img"
+        aria-label={venue}
+        style={{ '--plate-hue': venueHue(venue) } as CSSProperties}
+      >
+        <span className="cover-plate-band" aria-hidden="true">
+          <StrandMotif />
+        </span>
+        <span className="cover-plate-body" aria-hidden="true">
+          <span className="cover-plate-monogram">{monogram(venue)}</span>
+          <span className="cover-plate-venue">{venue}</span>
+        </span>
       </div>
     );
   }
@@ -116,7 +170,7 @@ function PublicationGroup({ type, publications }: { type: PublicationType; publi
   return (
     <section className="publication-type-group" aria-labelledby={`publication-type-${type}`}>
       <div className="publication-type-heading">
-        <h2 id={`publication-type-${type}`}>{publicationTypeLabels[type]} <span>({publications.length})</span></h2>
+        <h2 id={`publication-type-${type}`}>{publicationTypeLabels[type]}</h2>
       </div>
       {grouped.map(([year, entries]) => (
         <div className="publication-year-group" key={year}>
@@ -139,6 +193,111 @@ function PublicationGroup({ type, publications }: { type: PublicationType; publi
         </div>
       ))}
     </section>
+  );
+}
+
+
+const conferenceKindOrder: ConferenceKind[] = ['Award', 'Oral', 'Poster', 'Workshop', 'Attended'];
+
+const conferenceKindIcons: Record<ConferenceKind, LucideIcon> = {
+  Award,
+  Oral: Mic,
+  Poster: Presentation,
+  Workshop: GraduationCap,
+  Attended: Users,
+};
+
+const conferenceKindLabels: Record<ConferenceKind, string> = {
+  Award: 'Awards',
+  Oral: 'Oral presentations',
+  Poster: 'Poster presentations',
+  Workshop: 'Workshops & training',
+  Attended: 'Attended',
+};
+
+/**
+ * The 66 conference and workshop entries, grouped by year. Entries are shown
+ * verbatim, so the only affordance is filtering by kind.
+ */
+function ConferencesSection() {
+  const [kinds, setKinds] = useState<Set<ConferenceKind>>(() => new Set(conferenceKindOrder));
+
+  const toggle = (kind: ConferenceKind) =>
+    setKinds((current) => {
+      const next = new Set(current);
+      if (next.has(kind)) next.delete(kind);
+      else next.add(kind);
+      return next;
+    });
+
+  const years = useMemo(
+    () =>
+      CONFERENCE_YEARS.map((year) => ({
+        year,
+        items: CONFERENCES.filter((c) => c.year === year && kinds.has(c.kind)),
+      })).filter((group) => group.items.length > 0),
+    [kinds],
+  );
+
+  const total = years.reduce((sum, group) => sum + group.items.length, 0);
+
+  return (
+    <Section tone="sunken" id="conferences" className="conference-section">
+      <div className="conference-head">
+        <div>
+          <div className="eyebrow">Conferences &amp; Workshops</div>
+          <h2>Presentations, training, and meetings</h2>
+        </div>
+        <ul className="conference-kinds" aria-label="Filter by kind">
+          {conferenceKindOrder.map((kind) => {
+            const KindIcon = conferenceKindIcons[kind];
+            return (
+              <li key={kind}>
+                <button
+                  type="button"
+                  className="conference-kind-toggle"
+                  aria-pressed={kinds.has(kind)}
+                  onClick={() => toggle(kind)}
+                >
+                  <KindIcon size={14} strokeWidth={1.6} aria-hidden="true" />
+                  {conferenceKindLabels[kind]}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      <div className="sr-only" role="status" aria-live="polite">
+        {total} of {CONFERENCES.length} entries shown.
+      </div>
+
+      {years.length === 0 ? (
+        <p className="empty-state">No kinds selected.</p>
+      ) : (
+        years.map((group) => (
+          <section className="conference-year" key={group.year} aria-label={`${group.year}`}>
+            <h3 className="conference-year-label">{group.year}</h3>
+            <ol className="conference-list">
+              {group.items.map((item) => (
+                <li className="conference-item" key={item.id}>
+                  <span className={`conference-tag conference-tag--${item.kind.toLowerCase()}`}>
+                    <span className="conference-tag-badge" aria-hidden="true">
+                      {(() => {
+                        const KindIcon = conferenceKindIcons[item.kind];
+                        return <KindIcon size={17} strokeWidth={1.5} />;
+                      })()}
+                    </span>
+                    <span className="conference-tag-label">{item.kind}</span>
+                  </span>
+                  <p>{item.entry}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))
+      )}
+    </Section>
   );
 }
 
@@ -190,6 +349,8 @@ export function PublicationsPage() {
       <Section tone="base" className="publication-results">
         {selected.size === 0 ? <p className="empty-state">No publication type selected.</p> : groups.length === 0 ? <p className="empty-state">No publications match &quot;{query}&quot;.</p> : groups.map((group) => <PublicationGroup key={group.type} {...group} />)}
       </Section>
+
+      <ConferencesSection />
     </>
   );
 }
@@ -251,6 +412,40 @@ function initials(name: string) {
   return name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase();
 }
 
+/**
+ * Portrait from the person's institutional page. Falls back to the accent
+ * monogram plate if a file is ever missing, so a card never renders empty.
+ */
+function CollaboratorPortrait({ collaborator }: { collaborator: Collaborator }) {
+  const [failed, setFailed] = useState(false);
+
+  if (failed) {
+    return (
+      <div
+        className="monogram"
+        style={{ backgroundColor: collaborator.accent }}
+        aria-hidden="true"
+      >
+        {initials(collaborator.name)}
+      </div>
+    );
+  }
+
+  return (
+    <div className="collaborator-portrait">
+      <img
+        src={`${import.meta.env.BASE_URL}${collaborator.image.replace(/^\/+/, '')}`}
+        alt={collaborator.name}
+        loading="lazy"
+        decoding="async"
+        width="400"
+        height="300"
+        onError={() => setFailed(true)}
+      />
+    </div>
+  );
+}
+
 export function CollaboratorsPage() {
   return (
     <>
@@ -262,7 +457,7 @@ export function CollaboratorsPage() {
           <div className="collaborators-grid stagger-list">
             {COLLABORATORS.map((collaborator) => (
               <article className="collaborator-card" key={collaborator.id}>
-                <div className="monogram" style={{ backgroundColor: collaborator.accent }} aria-hidden="true">{initials(collaborator.name)}</div>
+                <CollaboratorPortrait collaborator={collaborator} />
                 <h2>{collaborator.name}</h2>
                 <p className="collaborator-institution">{collaborator.institution}</p>
                 <p>{collaborator.description}</p>
