@@ -138,3 +138,89 @@ export const FIGURES: ResearchFigure[] = [
   { id: 'fig-isoform', src: '/images/lab/Isoform_Usage.jpeg', caption: 'Isoform usage shifts on RNPS1 knockdown in HeLa and SiHa cells.', meta: 'Transcriptomics' },
   { id: 'fig-invasion', src: '/images/lab/Invasion.jpeg', caption: 'Invasion assays quantifying the role of EJC components in cancer cell lines.', meta: 'Cell biology' },
 ];
+
+/* ---------------------------------------------------------------------------
+ * Sanity wiring
+ *
+ * The research page is four different structures, so it queries four document
+ * types in one request rather than stitching a single page blob together.
+ * ------------------------------------------------------------------------ */
+
+export interface SanityResearchDocs {
+  pipeline: { _id: string; label?: string; caption?: string }[];
+  concepts: { _id: string; title?: string; eyebrow?: string; icon?: string; body?: string[] }[];
+  focusAreas: {
+    _id: string;
+    title?: string;
+    slug?: { current?: string };
+    eyebrow?: string;
+    icon?: string;
+    summary?: string;
+    body?: string[];
+    tags?: string[];
+    figureUrl?: string;
+  }[];
+  figures: { _id: string; caption?: string; meta?: string; imageUrl?: string }[];
+}
+
+export const RESEARCH_QUERY = `{
+  "pipeline": *[_type == "pipelineStage"] | order(order asc){_id, label, caption},
+  "concepts": *[_type == "researchConcept"] | order(order asc){_id, title, eyebrow, icon, body},
+  "focusAreas": *[_type == "focusArea"] | order(order asc){
+    _id, title, slug, eyebrow, icon, summary, body, tags,
+    "figureUrl": figure.asset->url
+  },
+  "figures": *[_type == "researchFigure"] | order(order asc){
+    _id, caption, meta, "imageUrl": image.asset->url
+  }
+}`;
+
+const cdn = (url: string | undefined, width: number) =>
+  url ? `${url}?w=${width}&auto=format&fit=max&q=75` : '';
+
+export function mapPipeline(docs: SanityResearchDocs['pipeline']): PipelineStage[] {
+  return docs
+    .filter((d) => d.label)
+    .map((d) => ({ id: d._id, label: d.label as string, caption: d.caption ?? '' }));
+}
+
+export function mapConcepts(docs: SanityResearchDocs['concepts']): Concept[] {
+  return docs
+    .filter((d) => d.title)
+    .map((d) => ({
+      id: d._id,
+      icon: d.icon ?? 'FlaskConical',
+      eyebrow: d.eyebrow ?? 'Core Concept',
+      title: d.title as string,
+      body: d.body ?? [],
+    }));
+}
+
+export function mapFocusAreas(docs: SanityResearchDocs['focusAreas']): FocusArea[] {
+  return docs
+    .filter((d) => d.title)
+    .map((d, index) => ({
+      // The anchor has to be the slug, not the document id: the page navigation
+      // and the detail bands link to each other by this value.
+      id: d.slug?.current ?? d._id,
+      number: String(index + 1).padStart(2, '0'),
+      icon: d.icon ?? 'Network',
+      eyebrow: d.eyebrow ?? 'Focus Area',
+      title: d.title as string,
+      summary: d.summary ?? '',
+      body: d.body ?? [],
+      imageSrc: cdn(d.figureUrl, 1200),
+      tags: d.tags ?? [],
+    }));
+}
+
+export function mapFigures(docs: SanityResearchDocs['figures']): ResearchFigure[] {
+  return docs
+    .filter((d) => d.imageUrl)
+    .map((d) => ({
+      id: d._id,
+      src: cdn(d.imageUrl, 1200),
+      caption: d.caption ?? '',
+      meta: d.meta ?? '',
+    }));
+}

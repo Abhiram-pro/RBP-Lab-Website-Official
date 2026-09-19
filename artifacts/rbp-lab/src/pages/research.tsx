@@ -7,7 +7,23 @@ import {
 } from '@/components/ui/accordion';
 import { PageHeader, Section, SectionHeader, SectionNav } from '@/components/page-patterns';
 import { assetPath } from '@/lib/asset-path';
-import { CONCEPTS, FIGURES, FOCUS_AREAS, PIPELINE, type FocusArea, type ResearchFigure } from '@/data/research';
+import {
+  CONCEPTS,
+  FIGURES,
+  FOCUS_AREAS,
+  PIPELINE,
+  RESEARCH_QUERY,
+  mapConcepts,
+  mapFigures,
+  mapFocusAreas,
+  mapPipeline,
+  type Concept,
+  type FocusArea,
+  type PipelineStage,
+  type ResearchFigure,
+  type SanityResearchDocs,
+} from '@/data/research';
+import { useSanityObject } from '@/hooks/use-sanity-data';
 import {
   Activity,
   ArrowDown,
@@ -58,12 +74,12 @@ function PlateFrame({ src, alt }: { src: string; alt: string }) {
 }
 
 /** Horizontal stepper on desktop, vertical timeline on mobile. */
-function PipelineDiagram() {
-  if (PIPELINE.length === 0) return null;
+function PipelineDiagram({ stages }: { stages: PipelineStage[] }) {
+  if (stages.length === 0) return null;
 
   return (
     <ol className="pipeline" aria-label="Stages of the RNA lifecycle">
-      {PIPELINE.map((stage, index) => (
+      {stages.map((stage, index) => (
         <li className="pipeline-stage" key={stage.id}>
           <div className="pipeline-node" aria-hidden="true">
             {String(index + 1).padStart(2, '0')}
@@ -137,12 +153,12 @@ function FocusAreaBand({ area, index }: { area: FocusArea; index: number }) {
   );
 }
 
-function ConceptAccordion() {
-  if (CONCEPTS.length === 0) return null;
+function ConceptAccordion({ concepts }: { concepts: Concept[] }) {
+  if (concepts.length === 0) return null;
 
   return (
-    <Accordion type="multiple" defaultValue={[CONCEPTS[0].id]} className="concept-accordion">
-      {CONCEPTS.map((concept) => (
+    <Accordion type="multiple" defaultValue={[concepts[0].id]} className="concept-accordion">
+      {concepts.map((concept) => (
         <AccordionItem value={concept.id} key={concept.id} className="concept-item">
           <AccordionTrigger className="concept-trigger">
             <span className="concept-trigger-inner">
@@ -183,10 +199,23 @@ function FigureGrid({ figures }: { figures: ResearchFigure[] }) {
 }
 
 export function ResearchPage() {
+  const { data } = useSanityObject(
+    RESEARCH_QUERY,
+    (raw: SanityResearchDocs) => ({
+      pipeline: mapPipeline(raw.pipeline ?? []),
+      concepts: mapConcepts(raw.concepts ?? []),
+      focusAreas: mapFocusAreas(raw.focusAreas ?? []),
+      figures: mapFigures(raw.figures ?? []),
+    }),
+    { pipeline: PIPELINE, concepts: CONCEPTS, focusAreas: FOCUS_AREAS, figures: FIGURES },
+    (raw) => !raw?.focusAreas?.length && !raw?.concepts?.length && !raw?.pipeline?.length,
+  );
+  const { pipeline, concepts, focusAreas, figures } = data;
+
   const navItems = [
     { label: 'Overview', href: '#overview', icon: <Compass size={16} strokeWidth={1.4} /> },
     { label: 'Background', href: '#background', icon: <BookOpen size={16} strokeWidth={1.4} /> },
-    ...FOCUS_AREAS.map((area) => ({
+    ...focusAreas.map((area) => ({
       label: area.title,
       href: `#${area.id}`,
       icon: <Icon name={area.icon} size={16} />,
@@ -210,9 +239,9 @@ export function ResearchPage() {
           title="Where the laboratory works"
           lede="Our programme follows RNA through its lifecycle, from the proteins deposited during splicing to the regulatory consequences downstream."
         />
-        <PipelineDiagram />
+        <PipelineDiagram stages={pipeline} />
         <div className="focus-grid stagger-list">
-          {FOCUS_AREAS.map((area) => (
+          {focusAreas.map((area) => (
             <FocusAreaCard area={area} key={area.id} />
           ))}
         </div>
@@ -220,10 +249,10 @@ export function ResearchPage() {
 
       <Section tone="raised" id="background" width="prose">
         <SectionHeader eyebrow="Background" title="The biology behind the questions" />
-        <ConceptAccordion />
+        <ConceptAccordion concepts={concepts} />
       </Section>
 
-      {FOCUS_AREAS.map((area, index) => (
+      {focusAreas.map((area, index) => (
         <FocusAreaBand area={area} index={index} key={area.id} />
       ))}
 
@@ -233,7 +262,7 @@ export function ResearchPage() {
           title="Selected data from the laboratory"
           lede="Representative plates from published and ongoing work."
         />
-        <FigureGrid figures={FIGURES} />
+        <FigureGrid figures={figures} />
       </Section>
     </>
   );

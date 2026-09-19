@@ -292,6 +292,69 @@ async function main() {
     });
   }
 
+  const pipeline = await loadFromSite('research.ts', 'PIPELINE');
+  const concepts = await loadFromSite('research.ts', 'CONCEPTS');
+  const focusAreas = await loadFromSite('research.ts', 'FOCUS_AREAS');
+  const figures = await loadFromSite('research.ts', 'FIGURES');
+  console.log(
+    `\nResearch (${pipeline.length} stages, ${concepts.length} concepts, ` +
+      `${focusAreas.length} focus areas, ${figures.length} figures)`,
+  );
+
+  const researchDocs = [
+    ...pipeline.map((stage, index) => ({
+      _id: `pipeline-${stage.id}`,
+      _type: 'pipelineStage',
+      label: stage.label,
+      caption: stage.caption,
+      order: (index + 1) * 10,
+    })),
+    ...concepts.map((concept, index) => ({
+      _id: `concept-${concept.id}`,
+      _type: 'researchConcept',
+      title: concept.title,
+      eyebrow: concept.eyebrow,
+      icon: concept.icon,
+      body: concept.body,
+      order: (index + 1) * 10,
+    })),
+  ];
+
+  for (const [index, area] of focusAreas.entries()) {
+    const rel = (area.imageSrc || '').replace(/^\/images\//, '');
+    const hasFigure = rel && existsSync(path.join(SITE, 'public/images', rel));
+    const assetId = hasFigure ? await uploadOnce(rel, cache) : null;
+    researchDocs.push({
+      _id: `focus-${area.id}`,
+      _type: 'focusArea',
+      title: area.title,
+      // Keep the existing anchor: /research links bands and nav by this value.
+      slug: { _type: 'slug', current: area.id },
+      eyebrow: area.eyebrow,
+      icon: area.icon,
+      summary: area.summary,
+      body: area.body,
+      tags: area.tags,
+      order: (index + 1) * 10,
+      ...(assetId ? { figure: { _type: 'image', asset: { _type: 'reference', _ref: assetId } } } : {}),
+    });
+  }
+
+  for (const [index, figure] of figures.entries()) {
+    const rel = (figure.src || '').replace(/^\/images\//, '');
+    const hasImage = rel && existsSync(path.join(SITE, 'public/images', rel));
+    if (!hasImage) { console.log(`  (no image) ${figure.id}`); continue; }
+    const assetId = await uploadOnce(rel, cache);
+    researchDocs.push({
+      _id: `figure-${figure.id}`,
+      _type: 'researchFigure',
+      caption: figure.caption,
+      meta: figure.meta,
+      order: (index + 1) * 10,
+      image: { _type: 'image', asset: { _type: 'reference', _ref: assetId } },
+    });
+  }
+
   const galleryDir = path.join(SITE, 'public/images/gallery');
   const files = (await readdir(galleryDir)).filter((f) => /\.(jpe?g|png|webp)$/i.test(f)).sort();
   console.log(`\nGallery (${files.length})`);
@@ -312,18 +375,18 @@ async function main() {
   }
 
   if (DRY_RUN) {
-    console.log(`\nDry run: would write ${newsDocs.length + galleryDocs.length + memberDocs.length + publicationDocs.length + equipmentDocs.length + collaboratorDocs.length} documents.`);
+    console.log(`\nDry run: would write ${newsDocs.length + galleryDocs.length + memberDocs.length + publicationDocs.length + equipmentDocs.length + collaboratorDocs.length + researchDocs.length} documents.`);
     return;
   }
 
   const tx = client.transaction();
-  for (const doc of [...newsDocs, ...galleryDocs, ...memberDocs, ...publicationDocs, ...equipmentDocs, ...collaboratorDocs]) tx.createOrReplace(doc);
+  for (const doc of [...newsDocs, ...galleryDocs, ...memberDocs, ...publicationDocs, ...equipmentDocs, ...collaboratorDocs, ...researchDocs]) tx.createOrReplace(doc);
   await tx.commit();
 
   const counts = await client.fetch(
-    '{"news": count(*[_type == "news"]), "gallery": count(*[_type == "galleryImage"]), "members": count(*[_type == "member"]), "publications": count(*[_type == "publication"]), "equipment": count(*[_type == "equipment"]), "collaborators": count(*[_type == "collaborator"])}',
+    '{"news": count(*[_type == "news"]), "gallery": count(*[_type == "galleryImage"]), "members": count(*[_type == "member"]), "publications": count(*[_type == "publication"]), "equipment": count(*[_type == "equipment"]), "collaborators": count(*[_type == "collaborator"]), "research": count(*[_type in ["focusArea","researchConcept","pipelineStage","researchFigure"]])}',
   );
-  console.log(`\nDone: ${counts.news} news, ${counts.gallery} gallery, ${counts.members} members, ${counts.publications} publications, ${counts.equipment} equipment, ${counts.collaborators} collaborators.`);
+  console.log(`\nDone: ${counts.news} news, ${counts.gallery} gallery, ${counts.members} members, ${counts.publications} publications, ${counts.equipment} equipment, ${counts.collaborators} collaborators, ${counts.research} research docs.`);
 }
 
 main().catch((error) => {
