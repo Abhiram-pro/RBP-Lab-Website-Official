@@ -119,3 +119,33 @@ export const EQUIPMENT: EquipmentItem[] = [
     accent: '#7DD3FC',
   },
 ];
+
+/** Shape returned by EQUIPMENT_QUERY. */
+export interface SanityEquipmentDoc {
+  _id: string;
+  name?: string;
+  model?: string;
+  description?: string;
+  funding?: string;
+  accent?: string;
+  photoUrl?: string;
+}
+
+export const EQUIPMENT_QUERY = `*[_type == "equipment"] | order(order asc, name asc){
+  _id, name, model, description, funding, accent,
+  "photoUrl": photo.asset->url
+}`;
+
+export function mapEquipmentDocs(docs: SanityEquipmentDoc[]): EquipmentItem[] {
+  return docs
+    .filter((doc) => doc.name)
+    .map((doc) => ({
+      id: doc._id,
+      name: doc.name as string,
+      model: doc.model ?? '',
+      description: doc.description ?? '',
+      funding: doc.funding ?? '',
+      imageSrc: doc.photoUrl ? `${doc.photoUrl}?w=900&auto=format&fit=max&q=75` : '',
+      accent: doc.accent ?? '#4EA8DE',
+    }));
+}

@@ -15,8 +15,13 @@ import {
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { PageHeader, Section } from '@/components/page-patterns';
-import { COLLABORATORS, type Collaborator } from '@/data/collaborators';
-import { EQUIPMENT } from '@/data/equipment';
+import {
+  COLLABORATORS,
+  COLLABORATORS_QUERY,
+  mapCollaboratorDocs,
+  type Collaborator,
+} from '@/data/collaborators';
+import { EQUIPMENT, EQUIPMENT_QUERY, mapEquipmentDocs } from '@/data/equipment';
 import { GALLERY_IMAGES, GALLERY_QUERY, mapGalleryDocs } from '@/data/gallery';
 import { NEWS_ITEMS, NEWS_QUERY, mapNewsDocs } from '@/data/news';
 import { useSanityData } from '@/hooks/use-sanity-data';
@@ -445,15 +450,16 @@ export function NewsPage() {
 }
 
 export function EquipmentPage() {
+  const { data: equipment } = useSanityData(EQUIPMENT_QUERY, mapEquipmentDocs, EQUIPMENT);
   return (
     <>
       <PageHeader eyebrow="Equipment" title="Lab Instrumentation">
         <p className="page-header-lede">Core equipment supporting our RNA biology, proteomics, and cell biology research programs. Each entry lists the grant it was procured under.</p>
       </PageHeader>
       <Section tone="base" className="equipment-section">
-        {EQUIPMENT.length === 0 ? <p className="empty-state">No equipment entries yet.</p> : (
+        {equipment.length === 0 ? <p className="empty-state">No equipment entries yet.</p> : (
           <div className="equipment-grid stagger-list">
-            {EQUIPMENT.map((item) => (
+            {equipment.map((item) => (
               <article className="equipment-card" key={item.id}>
                 <img src={item.imageSrc} alt="" />
                 <div className="equipment-accent" style={{ backgroundColor: item.accent }} />
@@ -511,15 +517,20 @@ function CollaboratorPortrait({ collaborator }: { collaborator: Collaborator }) 
 }
 
 export function CollaboratorsPage() {
+  const { data: collaborators } = useSanityData(
+    COLLABORATORS_QUERY,
+    mapCollaboratorDocs,
+    COLLABORATORS,
+  );
   return (
     <>
       <PageHeader eyebrow="RNA-Binding Proteins (RBPs) Laboratory" title="Collaborators">
         <p className="page-header-lede">Research partnerships spanning genetics, computer science, and engineering — within IIT Guwahati and beyond.</p>
       </PageHeader>
       <Section tone="base" className="collaborators-section">
-        {COLLABORATORS.length === 0 ? <p className="empty-state">No collaborators yet.</p> : (
+        {collaborators.length === 0 ? <p className="empty-state">No collaborators yet.</p> : (
           <div className="collaborators-grid stagger-list">
-            {COLLABORATORS.map((collaborator) => (
+            {collaborators.map((collaborator) => (
               <article className="collaborator-card" key={collaborator.id}>
                 <CollaboratorPortrait collaborator={collaborator} />
                 <h2>{collaborator.name}</h2>

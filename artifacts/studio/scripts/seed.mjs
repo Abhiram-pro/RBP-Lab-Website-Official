@@ -251,6 +251,47 @@ async function main() {
     ...(pub.extra ? { extra: pub.extra } : {}),
   }));
 
+  const equipment = await loadFromSite('equipment.ts', 'EQUIPMENT');
+  console.log(`\nEquipment (${equipment.length})`);
+  const equipmentDocs = [];
+  for (const [index, item] of equipment.entries()) {
+    const rel = item.imageSrc.replace(/^\/images\//, '');
+    const hasPhoto = existsSync(path.join(SITE, 'public/images', rel));
+    const assetId = hasPhoto ? await uploadOnce(rel, cache) : null;
+    if (!hasPhoto) console.log(`  (no photo) ${item.id}`);
+    equipmentDocs.push({
+      _id: `equipment-${item.id}`,
+      _type: 'equipment',
+      name: item.name,
+      model: item.model,
+      description: item.description,
+      funding: item.funding,
+      accent: item.accent,
+      order: (index + 1) * 10,
+      ...(assetId ? { photo: { _type: 'image', asset: { _type: 'reference', _ref: assetId } } } : {}),
+    });
+  }
+
+  const collaborators = await loadFromSite('collaborators.ts', 'COLLABORATORS');
+  console.log(`\nCollaborators (${collaborators.length})`);
+  const collaboratorDocs = [];
+  for (const [index, person] of collaborators.entries()) {
+    const rel = (person.image || '').replace(/^\/images\//, '');
+    const hasPortrait = rel && existsSync(path.join(SITE, 'public/images', rel));
+    const assetId = hasPortrait ? await uploadOnce(rel, cache) : null;
+    if (!hasPortrait) console.log(`  (no portrait) ${person.id}`);
+    collaboratorDocs.push({
+      _id: `collaborator-${person.id}`,
+      _type: 'collaborator',
+      name: person.name,
+      institution: person.institution,
+      description: person.description,
+      accent: person.accent,
+      order: (index + 1) * 10,
+      ...(assetId ? { portrait: { _type: 'image', asset: { _type: 'reference', _ref: assetId } } } : {}),
+    });
+  }
+
   const galleryDir = path.join(SITE, 'public/images/gallery');
   const files = (await readdir(galleryDir)).filter((f) => /\.(jpe?g|png|webp)$/i.test(f)).sort();
   console.log(`\nGallery (${files.length})`);
@@ -271,18 +312,18 @@ async function main() {
   }
 
   if (DRY_RUN) {
-    console.log(`\nDry run: would write ${newsDocs.length + galleryDocs.length + memberDocs.length + publicationDocs.length} documents.`);
+    console.log(`\nDry run: would write ${newsDocs.length + galleryDocs.length + memberDocs.length + publicationDocs.length + equipmentDocs.length + collaboratorDocs.length} documents.`);
     return;
   }
 
   const tx = client.transaction();
-  for (const doc of [...newsDocs, ...galleryDocs, ...memberDocs, ...publicationDocs]) tx.createOrReplace(doc);
+  for (const doc of [...newsDocs, ...galleryDocs, ...memberDocs, ...publicationDocs, ...equipmentDocs, ...collaboratorDocs]) tx.createOrReplace(doc);
   await tx.commit();
 
   const counts = await client.fetch(
-    '{"news": count(*[_type == "news"]), "gallery": count(*[_type == "galleryImage"]), "members": count(*[_type == "member"]), "publications": count(*[_type == "publication"])}',
+    '{"news": count(*[_type == "news"]), "gallery": count(*[_type == "galleryImage"]), "members": count(*[_type == "member"]), "publications": count(*[_type == "publication"]), "equipment": count(*[_type == "equipment"]), "collaborators": count(*[_type == "collaborator"])}',
   );
-  console.log(`\nDone: ${counts.news} news, ${counts.gallery} gallery, ${counts.members} members, ${counts.publications} publications.`);
+  console.log(`\nDone: ${counts.news} news, ${counts.gallery} gallery, ${counts.members} members, ${counts.publications} publications, ${counts.equipment} equipment, ${counts.collaborators} collaborators.`);
 }
 
 main().catch((error) => {

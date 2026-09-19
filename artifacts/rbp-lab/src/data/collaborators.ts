@@ -70,3 +70,33 @@ export const COLLABORATORS: Collaborator[] = [
     image: '/images/collaborators/prof-sachin-kumar.jpg',
   },
 ];
+
+/** Shape returned by COLLABORATORS_QUERY. */
+export interface SanityCollaboratorDoc {
+  _id: string;
+  name?: string;
+  institution?: string;
+  description?: string;
+  accent?: string;
+  portraitUrl?: string;
+}
+
+export const COLLABORATORS_QUERY = `*[_type == "collaborator"] | order(order asc, name asc){
+  _id, name, institution, description, accent,
+  "portraitUrl": portrait.asset->url
+}`;
+
+export function mapCollaboratorDocs(docs: SanityCollaboratorDoc[]): Collaborator[] {
+  return docs
+    .filter((doc) => doc.name)
+    .map((doc) => ({
+      id: doc._id,
+      name: doc.name as string,
+      institution: doc.institution ?? '',
+      description: doc.description ?? '',
+      accent: doc.accent ?? '#134074',
+      // Empty string rather than undefined: the card falls back to the
+      // monogram plate when the portrait fails to load.
+      image: doc.portraitUrl ? `${doc.portraitUrl}?w=560&h=700&fit=crop&auto=format&q=75` : '',
+    }));
+}
