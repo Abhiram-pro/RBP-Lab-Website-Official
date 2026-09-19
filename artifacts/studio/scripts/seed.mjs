@@ -173,6 +173,34 @@ async function uploadOnce(relPath, cache) {
   return asset._id;
 }
 
+/**
+ * Reads an exported array straight out of the site's TypeScript data files.
+ * Re-declaring 63 publications in this script would guarantee the two copies
+ * drift, so the source of truth stays in one place.
+ */
+async function loadFromSite(relPath, exportName) {
+  const source = await readFile(path.join(SITE, 'src/data', relPath), 'utf8');
+  const start = source.indexOf(`export const ${exportName}`);
+  if (start === -1) throw new Error(`${exportName} not found in ${relPath}`);
+  // Anchor past the `=`: the type annotation (`: Publication[]`) contains a
+  // bracket that would otherwise be mistaken for the start of the array.
+  const assign = source.indexOf('=', start);
+  const open = source.indexOf('[', assign);
+  let depth = 0;
+  let end = open;
+  for (let i = open; i < source.length; i += 1) {
+    if (source[i] === '[') depth += 1;
+    else if (source[i] === ']') {
+      depth -= 1;
+      if (depth === 0) { end = i; break; }
+    }
+  }
+  const literal = source.slice(open, end + 1);
+  // The arrays are plain data; evaluating the literal keeps every character
+  // (em dashes, Greek letters, nested quotes) byte-identical.
+  return new Function(`return ${literal};`)();
+}
+
 async function main() {
   const cache = new Map();
 
@@ -210,6 +238,19 @@ async function main() {
     });
   }
 
+  const publications = await loadFromSite('publications.ts', 'PUBLICATIONS');
+  console.log(`\nPublications (${publications.length})`);
+  const publicationDocs = publications.map((pub) => ({
+    _id: `publication-${pub.id}`,
+    _type: 'publication',
+    citation: pub.citation,
+    venue: pub.venue,
+    year: pub.year,
+    type: pub.type,
+    ...(pub.doi ? { doi: pub.doi } : {}),
+    ...(pub.extra ? { extra: pub.extra } : {}),
+  }));
+
   const galleryDir = path.join(SITE, 'public/images/gallery');
   const files = (await readdir(galleryDir)).filter((f) => /\.(jpe?g|png|webp)$/i.test(f)).sort();
   console.log(`\nGallery (${files.length})`);
@@ -230,18 +271,18 @@ async function main() {
   }
 
   if (DRY_RUN) {
-    console.log(`\nDry run: would write ${newsDocs.length + galleryDocs.length + memberDocs.length} documents.`);
+    console.log(`\nDry run: would write ${newsDocs.length + galleryDocs.length + memberDocs.length + publicationDocs.length} documents.`);
     return;
   }
 
   const tx = client.transaction();
-  for (const doc of [...newsDocs, ...galleryDocs, ...memberDocs]) tx.createOrReplace(doc);
+  for (const doc of [...newsDocs, ...galleryDocs, ...memberDocs, ...publicationDocs]) tx.createOrReplace(doc);
   await tx.commit();
 
   const counts = await client.fetch(
-    '{"news": count(*[_type == "news"]), "gallery": count(*[_type == "galleryImage"]), "members": count(*[_type == "member"])}',
+    '{"news": count(*[_type == "news"]), "gallery": count(*[_type == "galleryImage"]), "members": count(*[_type == "member"]), "publications": count(*[_type == "publication"])}',
   );
-  console.log(`\nDone: ${counts.news} news, ${counts.gallery} gallery, ${counts.members} members.`);
+  console.log(`\nDone: ${counts.news} news, ${counts.gallery} gallery, ${counts.members} members, ${counts.publications} publications.`);
 }
 
 main().catch((error) => {

@@ -499,3 +499,40 @@ export const PUBLICATIONS: Publication[] = [
     type: 'bookChapters',
   },
 ];
+
+/** Shape returned by PUBLICATIONS_QUERY. */
+export interface SanityPublicationDoc {
+  _id: string;
+  citation?: string;
+  venue?: string;
+  year?: string;
+  doi?: string;
+  extra?: string;
+  type?: string;
+}
+
+export const PUBLICATIONS_QUERY = `*[_type == "publication"] | order(year desc, _createdAt asc){
+  _id, citation, venue, year, doi, extra, type
+}`;
+
+const PUBLICATION_TYPES: PublicationType[] = ['journals', 'conferences', 'books', 'bookChapters'];
+
+const isPublicationType = (value: string | undefined): value is PublicationType =>
+  PUBLICATION_TYPES.includes(value as PublicationType);
+
+/** Maps Studio documents onto the publications the page renders. */
+export function mapPublicationDocs(docs: SanityPublicationDoc[]): Publication[] {
+  return docs
+    .filter((doc) => doc.citation)
+    .map((doc) => ({
+      id: doc._id,
+      citation: doc.citation as string,
+      venue: doc.venue ?? '',
+      year: doc.year ?? '',
+      doi: doc.doi || undefined,
+      extra: doc.extra || undefined,
+      // An unrecognised value would drop the entry from every filter group and
+      // make it invisible, so fall back to the largest category.
+      type: isPublicationType(doc.type) ? doc.type : 'journals',
+    }));
+}

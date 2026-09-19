@@ -21,7 +21,13 @@ import { GALLERY_IMAGES, GALLERY_QUERY, mapGalleryDocs } from '@/data/gallery';
 import { NEWS_ITEMS, NEWS_QUERY, mapNewsDocs } from '@/data/news';
 import { useSanityData } from '@/hooks/use-sanity-data';
 import { assetPath } from '@/lib/asset-path';
-import { PUBLICATIONS, type Publication, type PublicationType } from '@/data/publications';
+import {
+  PUBLICATIONS,
+  PUBLICATIONS_QUERY,
+  mapPublicationDocs,
+  type Publication,
+  type PublicationType,
+} from '@/data/publications';
 import { CONFERENCES, CONFERENCE_YEARS, type ConferenceKind } from '@/data/conferences';
 import { coverFor } from '@/data/journals';
 
@@ -344,10 +350,15 @@ function ConferencesSection() {
 }
 
 export function PublicationsPage() {
+  const { data: publications } = useSanityData(
+    PUBLICATIONS_QUERY,
+    mapPublicationDocs,
+    PUBLICATIONS,
+  );
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<Set<PublicationType>>(() => new Set(publicationTypeOrder));
   const normalizedQuery = query.trim().toLowerCase();
-  const filtered = PUBLICATIONS.filter((publication) => {
+  const filtered = publications.filter((publication) => {
     if (!selected.has(publication.type)) return false;
     if (!normalizedQuery) return true;
     return `${publication.citation} ${publication.venue} ${publication.year}`.toLowerCase().includes(normalizedQuery);
