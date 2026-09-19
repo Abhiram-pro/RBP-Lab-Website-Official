@@ -1,7 +1,8 @@
-import { useMemo, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import {
   ArrowRight,
   Award,
+  Check,
   ChevronDown,
   Filter,
   GraduationCap,
@@ -9,6 +10,7 @@ import {
   Presentation,
   Search,
   Users,
+  X,
   type LucideIcon,
 } from 'lucide-react';
 import { Link } from 'wouter';
@@ -32,18 +34,53 @@ const publicationTypeOrder: PublicationType[] = ['journals', 'conferences', 'boo
 
 function PublicationsFilter({ selected, onToggle }: { selected: Set<PublicationType>; onToggle: (type: PublicationType) => void }) {
   const [open, setOpen] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
   const count = publicationTypeOrder.length - selected.size;
 
+  // A bare dropdown with no dismissal leaves the panel stuck over the results.
+  useEffect(() => {
+    if (!open) return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (!root.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        root.current?.querySelector<HTMLButtonElement>('.filter-trigger')?.focus();
+      }
+    };
+
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open]);
+
   return (
-    <div className="publication-filter">
-      <button className="filter-trigger" type="button" aria-expanded={open} onClick={() => setOpen((value) => !value)}>
+    <div className="publication-filter" ref={root}>
+      <button
+        className="filter-trigger"
+        type="button"
+        aria-expanded={open}
+        aria-haspopup="true"
+        onClick={() => setOpen((value) => !value)}
+      >
         <Filter size={15} aria-hidden="true" />
         Filter
         {count > 0 ? <span className="filter-count">{count}</span> : null}
-        <ChevronDown size={14} aria-hidden="true" />
+        <ChevronDown size={14} aria-hidden="true" className="filter-chevron" />
       </button>
       {open ? (
-        <div className="filter-menu">
+        <div className="filter-menu" role="group" aria-label="Filter by publication type">
+          <div className="filter-menu-head">
+            <span>Show types</span>
+            <button type="button" onClick={() => setOpen(false)} aria-label="Close filter">
+              <X size={14} aria-hidden="true" />
+            </button>
+          </div>
           {publicationTypeOrder.map((type) => (
             <label className="filter-option" key={type}>
               <input
@@ -53,7 +90,10 @@ function PublicationsFilter({ selected, onToggle }: { selected: Set<PublicationT
                 checked={selected.has(type)}
                 onChange={() => onToggle(type)}
               />
-              <span>{publicationTypeLabels[type]}</span>
+              <span className="filter-box" aria-hidden="true">
+                <Check size={12} strokeWidth={3} />
+              </span>
+              <span className="filter-label">{publicationTypeLabels[type]}</span>
             </label>
           ))}
         </div>

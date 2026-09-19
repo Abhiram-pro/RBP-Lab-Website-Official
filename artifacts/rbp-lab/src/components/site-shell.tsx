@@ -16,14 +16,6 @@ const navigation = [
   { label: 'Gallery', href: '/gallery' },
 ];
 
-const mobileNavigation = [
-  { label: 'Home', href: '/' },
-  { label: 'Research', href: '/research' },
-  { label: 'Members', href: '/members' },
-  { label: 'Papers', href: '/publications' },
-  { label: 'Contact', href: '/contact' },
-];
-
 const footerNavigation = [
   { label: 'Research', href: '/research' },
   { label: 'Members', href: '/members' },
@@ -41,7 +33,52 @@ function isCurrent(location: string, href: string) {
 
 export function SiteShell({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [headerHidden, setHeaderHidden] = useState(false);
   const [location] = useLocation();
+
+  /**
+   * The header is sticky, so on a phone it permanently covers a band of
+   * content. Hide it while scrolling down and bring it back on the way up —
+   * the nav stays one gesture away without holding real estate.
+   */
+  useEffect(() => {
+    let last = window.scrollY;
+    let frame = 0;
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        const y = window.scrollY;
+        const delta = y - last;
+        // Ignore sub-pixel jitter and rubber-band scrolling past the top.
+        if (Math.abs(delta) > 6 && y > 120) setHeaderHidden(delta > 0);
+        else if (y <= 120) setHeaderHidden(false);
+        last = y;
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  // An open menu must never be scrolled out of reach with its own header.
+  useEffect(() => {
+    if (menuOpen) setHeaderHidden(false);
+  }, [menuOpen]);
+
+  // Escape closes the menu, matching the filter dropdown.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [menuOpen]);
 
   useEffect(() => {
     document.documentElement.classList.add('motion-ready');
@@ -75,7 +112,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
   return (
     <div className="site-shell">
       <a className="skip-link" href="#main-content" data-testid="link-skip-content">Skip to content</a>
-      <header className="site-header">
+      <header className="site-header" data-hidden={headerHidden}>
         <div className="header-inner">
           <Link className="wordmark" href="/" aria-label="RNA-Binding Proteins Laboratory home" data-testid="link-home-wordmark" onClick={() => setMenuOpen(false)}>
             <img
@@ -101,6 +138,12 @@ export function SiteShell({ children }: { children: ReactNode }) {
             {menuOpen ? <X size={17} strokeWidth={1.5} /> : <Menu size={17} strokeWidth={1.5} />}
           </button>
         </div>
+        <div
+          className="mobile-menu-backdrop"
+          data-open={menuOpen}
+          onClick={() => setMenuOpen(false)}
+          aria-hidden="true"
+        />
         <div className="mobile-menu" id="mobile-navigation" data-open={menuOpen}>
           <div className="mobile-menu-inner">
             <nav className="mobile-menu-links" aria-label="Mobile navigation">
@@ -147,14 +190,6 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <p className="footer-credit">Developed and maintained by Abhiram Ganji</p>
         </div>
       </footer>
-      <nav className="mobile-tabs" aria-label="Mobile quick navigation">
-        {mobileNavigation.map((item, index) => (
-          <Link className="mobile-tab" href={item.href} aria-current={isCurrent(location, item.href) ? 'page' : undefined} data-testid={`link-tab-${item.label.toLowerCase()}`} key={item.href}>
-            <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-            <span>{item.label}</span>
-          </Link>
-        ))}
-      </nav>
     </div>
   );
 }
