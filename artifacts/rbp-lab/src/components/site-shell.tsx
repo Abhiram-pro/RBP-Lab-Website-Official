@@ -1,9 +1,12 @@
 import { type ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation } from 'wouter';
-import { Menu, X } from 'lucide-react';
+import { LogIn, Menu, X } from 'lucide-react';
 import { CONTACT } from '@/data/contact';
 import { FUNDERS } from '@/data/funders';
 import { Marquee } from '@/components/marquee';
+
+/** Content is edited in the Sanity Studio; Sanity owns authentication. */
+const STUDIO_URL = 'https://rbplab.sanity.studio';
 
 const navigation = [
   { label: 'Home', href: '/' },
@@ -187,7 +190,21 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <span>© 2026 RNA-Binding Proteins Laboratory, IIT Guwahati. All rights reserved.</span>
             <span>FUNDED BY DBT · DST-SERB · CSIR · ICMR · IIT GUWAHATI</span>
           </div>
-          <p className="footer-credit">Developed and maintained by Abhiram Ganji</p>
+          <div className="footer-meta">
+            <p className="footer-credit">Developed and maintained by Abhiram Ganji</p>
+            {/* Points at the Sanity Studio. Sanity handles the sign-in, so the
+                site itself carries no auth — only invited lab members get in. */}
+            <a
+              className="footer-login"
+              href={STUDIO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-testid="link-member-login"
+            >
+              <LogIn size={13} strokeWidth={1.6} aria-hidden="true" />
+              Lab Member Login
+            </a>
+          </div>
         </div>
       </footer>
     </div>

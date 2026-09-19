@@ -726,6 +726,34 @@
     text-transform: uppercase;
   }
 
+  .footer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+  }
+
+  /* Editors' way in. Deliberately understated — useful to the handful of people
+     who need it, invisible to everyone else reading the page. */
+  .footer-login {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.9rem;
+    color: hsl(var(--muted-foreground) / 0.75);
+    font-family: var(--app-font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .footer-login:hover,
+  .footer-login:focus-visible {
+    color: hsl(var(--accent));
+  }
+
   /* Quieter than the copyright row above it: a build credit, not a claim. */
   .footer-credit {
     margin: 0.9rem 0 0;
