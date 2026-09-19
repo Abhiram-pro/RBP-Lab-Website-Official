@@ -115,6 +115,37 @@ const NEWS = [
   },
 ];
 
+
+/**
+ * Members, in the order the site already lists them. `order` is spaced by ten
+ * so the lab can slot someone in between two people without renumbering.
+ */
+const MEMBERS = [
+  ['Prof. Kusum K. Singh', 'Principal Investigator \u00b7 Assistant Professor', 'kusum-k-singh', 'current', true],
+  ['Khalid Mohd Ibrahimi', 'Postdoctoral Researcher', 'khalid-mohd-ibrahimi', 'current', false],
+  ['Priyanka Yadav', 'PhD Scholar \u00b7 NMD & UPF3B Regulation', 'priyanka-yadav', 'current', false],
+  ['Sourabh Chakrabarty', 'PhD Scholar \u00b7 RNA-Protein Interactions', 'sourabh-chakrabarty', 'current', false],
+  ['Silpi Sikha Bora', 'PhD Scholar', 'silpi-sikha-bora', 'current', false],
+  ['Lashika Goyal', 'M.Tech Scholar', 'lashika-goyal', 'current', false],
+  ['Priya Gautam', 'M.Tech Scholar', 'priya-gautam', 'current', false],
+  ['Bhagyashree Deka', 'PhD Scholar', 'bhagyashree-deka', 'alumni', false],
+  ['Pratap Chandra', 'PhD Scholar', 'pratap-chandra', 'alumni', false],
+  ['Sweta Kumari', 'PhD Scholar', 'sweta-kumari', 'alumni', false],
+  ['Ayushi Rehman', 'PhD Scholar', 'ayushi-rehman', 'alumni', false],
+  ['Jebasingh Winston R', 'M.Tech', 'jebasingh-winston', 'alumni', false],
+  ['Harita M', 'M.Tech', 'harita-m', 'alumni', false],
+  ['Raja T', 'M.Tech', 'raja-t', 'alumni', false],
+  ['Vishal Bharti', 'M.Tech', 'vishal-bharti', 'alumni', false],
+  ['Ajay Narwade', 'M.Tech', 'ajay-narwade', 'alumni', false],
+  ['Sonali Devi', 'M.Tech', 'sonali-devi', 'alumni', false],
+  ['Harekrishna Mandal', 'M.Tech', 'harekrishna-mandal', 'alumni', false],
+  ['Nayan Jain', 'M.Tech', 'nayan-jain', 'alumni', false],
+  ['Gourab Chatterjee', 'M.Tech', 'gourab-chatterjee', 'alumni', false],
+  ['Abhiram Ganji', 'Summer Intern \u00b7 Data Science & AI', 'abhiram-ganji', 'intern', false],
+].map(([name, role, slug, group, isPrincipalInvestigator], index) => ({
+  name, role, slug, group, isPrincipalInvestigator, order: (index + 1) * 10,
+}));
+
 /** Reuses an existing asset with the same original filename. */
 async function uploadOnce(relPath, cache) {
   const filename = path.basename(relPath);
@@ -157,6 +188,28 @@ async function main() {
     });
   }
 
+  console.log(`\nMembers (${MEMBERS.length})`);
+  const memberDocs = [];
+  for (const person of MEMBERS) {
+    const rel = `members/${person.slug}.jpg`;
+    const hasPortrait = existsSync(path.join(SITE, 'public/images', rel));
+    const assetId = hasPortrait ? await uploadOnce(rel, cache) : null;
+    if (!hasPortrait) console.log(`  (no portrait) ${person.slug}`);
+    memberDocs.push({
+      _id: `member-${person.slug}`,
+      _type: 'member',
+      name: person.name,
+      role: person.role,
+      group: person.group,
+      slug: { _type: 'slug', current: person.slug },
+      order: person.order,
+      isPrincipalInvestigator: person.isPrincipalInvestigator,
+      ...(assetId
+        ? { portrait: { _type: 'image', asset: { _type: 'reference', _ref: assetId } } }
+        : {}),
+    });
+  }
+
   const galleryDir = path.join(SITE, 'public/images/gallery');
   const files = (await readdir(galleryDir)).filter((f) => /\.(jpe?g|png|webp)$/i.test(f)).sort();
   console.log(`\nGallery (${files.length})`);
@@ -177,18 +230,18 @@ async function main() {
   }
 
   if (DRY_RUN) {
-    console.log(`\nDry run: would write ${newsDocs.length + galleryDocs.length} documents.`);
+    console.log(`\nDry run: would write ${newsDocs.length + galleryDocs.length + memberDocs.length} documents.`);
     return;
   }
 
   const tx = client.transaction();
-  for (const doc of [...newsDocs, ...galleryDocs]) tx.createOrReplace(doc);
+  for (const doc of [...newsDocs, ...galleryDocs, ...memberDocs]) tx.createOrReplace(doc);
   await tx.commit();
 
   const counts = await client.fetch(
-    '{"news": count(*[_type == "news"]), "gallery": count(*[_type == "galleryImage"])}',
+    '{"news": count(*[_type == "news"]), "gallery": count(*[_type == "galleryImage"]), "members": count(*[_type == "member"])}',
   );
-  console.log(`\nDone. Dataset now holds ${counts.news} news and ${counts.gallery} gallery docs.`);
+  console.log(`\nDone: ${counts.news} news, ${counts.gallery} gallery, ${counts.members} members.`);
 }
 
 main().catch((error) => {

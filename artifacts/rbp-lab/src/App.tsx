@@ -21,6 +21,14 @@ import { SiteShell } from '@/components/site-shell';
 import NotFound from '@/pages/not-found';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
 import { assetPath } from '@/lib/asset-path';
+import {
+  MEMBERS,
+  MEMBERS_QUERY,
+  PRINCIPAL_INVESTIGATOR,
+  groupMembers,
+  mapMemberDocs,
+  type Member,
+} from '@/data/members';
 import { useSanityData } from '@/hooks/use-sanity-data';
 import { NEWS_ITEMS, NEWS_QUERY, mapNewsDocs } from '@/data/news';
 
@@ -93,41 +101,6 @@ const gatewayCards = [
   },
 ];
 
-type Member = {
-  name: string;
-  role: string;
-  slug: string;
-};
-
-const currentMembers: Member[] = [
-  { name: 'Khalid Mohd Ibrahimi', role: 'Postdoctoral Researcher', slug: 'khalid-mohd-ibrahimi' },
-  { name: 'Priyanka Yadav', role: 'PhD Scholar · NMD & UPF3B Regulation', slug: 'priyanka-yadav' },
-  { name: 'Sourabh Chakrabarty', role: 'PhD Scholar · RNA-Protein Interactions', slug: 'sourabh-chakrabarty' },
-  { name: 'Silpi Sikha Bora', role: 'PhD Scholar', slug: 'silpi-sikha-bora' },
-  { name: 'Lashika Goyal', role: 'M.Tech Scholar', slug: 'lashika-goyal' },
-  { name: 'Priya Gautam', role: 'M.Tech Scholar', slug: 'priya-gautam' },
-];
-
-const alumni: Member[] = [
-  { name: 'Bhagyashree Deka', role: 'PhD Scholar', slug: 'bhagyashree-deka' },
-  { name: 'Pratap Chandra', role: 'PhD Scholar', slug: 'pratap-chandra' },
-  { name: 'Sweta Kumari', role: 'PhD Scholar', slug: 'sweta-kumari' },
-  { name: 'Ayushi Rehman', role: 'PhD Scholar', slug: 'ayushi-rehman' },
-  { name: 'Jebasingh Winston R', role: 'M.Tech', slug: 'jebasingh-winston' },
-  { name: 'Harita M', role: 'M.Tech', slug: 'harita-m' },
-  { name: 'Raja T', role: 'M.Tech', slug: 'raja-t' },
-  { name: 'Vishal Bharti', role: 'M.Tech', slug: 'vishal-bharti' },
-  { name: 'Ajay Narwade', role: 'M.Tech', slug: 'ajay-narwade' },
-  { name: 'Sonali Devi', role: 'M.Tech', slug: 'sonali-devi' },
-  { name: 'Harekrishna Mandal', role: 'M.Tech', slug: 'harekrishna-mandal' },
-  { name: 'Nayan Jain', role: 'M.Tech', slug: 'nayan-jain' },
-  { name: 'Gourab Chatterjee', role: 'M.Tech', slug: 'gourab-chatterjee' },
-];
-
-const interns: Member[] = [
-  { name: 'Abhiram Ganji', role: 'Summer Intern · Data Science & AI', slug: 'abhiram-ganji' },
-];
-
 function PortraitFrame({ member, featured = false, className = '' }: { member: Member; featured?: boolean; className?: string }) {
   const [missing, setMissing] = useState(false);
   const alt = `Portrait of ${member.name}`;
@@ -138,7 +111,7 @@ function PortraitFrame({ member, featured = false, className = '' }: { member: M
         <div className="member-portrait-blank" role="img" aria-label={`${alt}. Image not available.`} />
       ) : (
         <img
-          src={assetPath(`/images/members/${member.slug}.jpg`)}
+          src={assetPath(member.portrait ?? `/images/members/${member.slug}.jpg`)}
           alt={alt}
           onError={() => setMissing(true)}
         />
@@ -180,7 +153,9 @@ function RosterSectionHeader({ title, lede }: { title: string; lede?: string }) 
 }
 
 function Members() {
-  const pi: Member = { name: 'Prof. Kusum K. Singh', role: 'Principal Investigator · Assistant Professor', slug: 'kusum-k-singh' };
+  const { data: allMembers } = useSanityData(MEMBERS_QUERY, mapMemberDocs, MEMBERS);
+  const { principalInvestigator: pi, current: currentMembers, alumni, interns } =
+    groupMembers(allMembers);
 
   return (
     <>
@@ -273,7 +248,7 @@ function ProfileColumns() {
 }
 
 function FacultyProfile() {
-  const pi: Member = { name: 'Prof. Kusum K. Singh', role: 'Principal Investigator · Assistant Professor', slug: 'kusum-k-singh' };
+  const pi: Member = PRINCIPAL_INVESTIGATOR;
 
   return (
     <>
