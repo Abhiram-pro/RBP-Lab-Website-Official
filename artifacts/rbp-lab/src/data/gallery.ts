@@ -114,6 +114,17 @@ export const GALLERY_QUERY = `*[_type == "galleryImage" && defined(image.asset)]
 }`;
 
 /**
+ * Sanity's asset URL points at the untouched original — the lab's photographs
+ * are up to 5568x3712, so serving those directly would push tens of megabytes
+ * per page view. Appending transform params makes the CDN resize and re-encode
+ * on the fly, and the aspect ratio is unchanged so the reserved frame still
+ * matches.
+ */
+function cdnUrl(url: string, width: number) {
+  return `${url}?w=${width}&auto=format&fit=max&q=75`;
+}
+
+/**
  * Maps Studio documents onto the gallery shape. Sanity reports intrinsic
  * dimensions in asset metadata, which the grid needs up front to reserve each
  * frame; without them the layout shifts as images arrive.
@@ -123,7 +134,7 @@ export function mapGalleryDocs(docs: SanityGalleryDoc[]): GalleryImage[] {
     .filter((doc) => doc.imageUrl)
     .map((doc) => ({
       id: doc._id,
-      src: doc.imageUrl as string,
+      src: cdnUrl(doc.imageUrl as string, 1600),
       width: doc.width ?? 1600,
       height: doc.height ?? 1067,
       alt: doc.alt ?? doc.caption ?? 'Laboratory photograph',

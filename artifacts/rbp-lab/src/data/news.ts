@@ -114,7 +114,9 @@ export function mapNewsDocs(docs: SanityNewsDoc[]): NewsEntry[] {
       kind: doc.kind ? doc.kind.charAt(0).toUpperCase() + doc.kind.slice(1) : 'Announcement',
       venue: doc.venue,
       year: doc.year ?? '',
-      image: doc.imageUrl,
+      // Same reasoning as the gallery: ask the CDN for a card-sized render
+      // rather than the original upload.
+      image: doc.imageUrl ? `${doc.imageUrl}?w=900&auto=format&fit=max&q=75` : undefined,
       link: doc.link,
     }));
 }

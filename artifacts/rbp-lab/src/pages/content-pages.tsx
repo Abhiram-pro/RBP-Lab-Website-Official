@@ -20,6 +20,7 @@ import { EQUIPMENT } from '@/data/equipment';
 import { GALLERY_IMAGES, GALLERY_QUERY, mapGalleryDocs } from '@/data/gallery';
 import { NEWS_ITEMS, NEWS_QUERY, mapNewsDocs } from '@/data/news';
 import { useSanityData } from '@/hooks/use-sanity-data';
+import { assetPath } from '@/lib/asset-path';
 import { PUBLICATIONS, type Publication, type PublicationType } from '@/data/publications';
 import { CONFERENCES, CONFERENCE_YEARS, type ConferenceKind } from '@/data/conferences';
 import { coverFor } from '@/data/journals';
@@ -486,7 +487,7 @@ function CollaboratorPortrait({ collaborator }: { collaborator: Collaborator }) 
   return (
     <div className="collaborator-portrait">
       <img
-        src={`${import.meta.env.BASE_URL}${collaborator.image.replace(/^\/+/, '')}`}
+        src={assetPath(collaborator.image)}
         alt={collaborator.name}
         loading="lazy"
         decoding="async"
@@ -550,7 +551,7 @@ function GalleryImageFrame({ image, eager }: { image: (typeof GALLERY_IMAGES)[nu
     <div className="gallery-image-frame" style={{ aspectRatio: `${image.width} / ${image.height}` }}>
       <img
         className={loaded ? 'is-loaded' : ''}
-        src={image.src}
+        src={assetPath(image.src)}
         alt={image.alt}
         width={image.width}
         height={image.height}

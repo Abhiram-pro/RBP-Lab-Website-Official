@@ -20,12 +20,11 @@ import { ResearchPage } from '@/pages/research';
 import { SiteShell } from '@/components/site-shell';
 import NotFound from '@/pages/not-found';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
+import { assetPath } from '@/lib/asset-path';
 import { useSanityData } from '@/hooks/use-sanity-data';
 import { NEWS_ITEMS, NEWS_QUERY, mapNewsDocs } from '@/data/news';
 
 const queryClient = new QueryClient();
-
-const assetPath = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;
 
 function FigureFrame({ src, alt, caption, className = '' }: { src: string; alt: string; caption?: string; className?: string }) {
   const [missing, setMissing] = useState(false);

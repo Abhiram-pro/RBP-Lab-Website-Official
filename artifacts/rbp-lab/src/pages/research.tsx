@@ -6,6 +6,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { PageHeader, Section, SectionHeader, SectionNav } from '@/components/page-patterns';
+import { assetPath } from '@/lib/asset-path';
 import { CONCEPTS, FIGURES, FOCUS_AREAS, PIPELINE, type FocusArea, type ResearchFigure } from '@/data/research';
 import {
   Activity,
@@ -35,9 +36,6 @@ function Icon({ name, size = 20 }: { name: string; size?: number }) {
   const Resolved = ICONS[name] ?? Network;
   return <Resolved size={size} strokeWidth={1.3} aria-hidden="true" />;
 }
-
-const assetPath = (path: string) =>
-  path.startsWith('data:') ? path : `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;
 
 /**
  * Scientific plates sit on white and must not be cropped — object-contain,
