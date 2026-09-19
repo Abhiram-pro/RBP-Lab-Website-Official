@@ -145,6 +145,13 @@ importers:
         version: 5.9.3
 
   artifacts/rbp-lab:
+    dependencies:
+      '@sanity/client':
+        specifier: ^8.6.2
+        version: 8.6.2
+      '@sanity/image-url':
+        specifier: ^2.1.1
+        version: 2.1.1
     devDependencies:
       '@hookform/resolvers':
         specifier: ^3.10.0
@@ -2653,6 +2660,10 @@ packages:
     resolution: {integrity: sha512-sYASM1fuPeCx2dZzlq3edtv1UmvizUmMLkN0x3Rkxs/NrTAikxGyOAtEuAZt25mwliqBiHsYbB0L4G6MWVgHLw==}
     engines: {node: '>=22.12.0'}
 
+  '@sanity/client@8.6.2':
+    resolution: {integrity: sha512-e/rKvOxMy3hP+4p1fdVfONKrdmlNQQyjzHai/cQYPTe/CLLsxVQZWcPsXOq+rgZ3gitxXHtqx1H4nrYmBG97Qg==}
+    engines: {node: '>=22.12.0'}
+
   '@sanity/codegen@8.1.0':
     resolution: {integrity: sha512-rZjT5+sbzgRbeuenK9qaxu7tFLc+vmrKvyU8ie79DWXq3TP8S1adnxwv1W7o5MyK40Ju5SkTqbR/xNujnsCrzQ==}
     engines: {node: '>=22.12'}
@@ -4845,6 +4856,10 @@ packages:
 
   obug@2.2.1:
     resolution: {integrity: sha512-XrsrhT5sybtKI6wakr2SPOlGZWWYbUXZ7a0jT8/QOeAPau+1X/bSegNe5YR75oJmEZQbKningirmGOEJCIk61Q==}
+    engines: {node: '>=12.20.0'}
+
+  obug@3.0.0:
+    resolution: {integrity: sha512-5vvB5+W7ePv+p3uqxi+RcW1XAzLW0/hxt3/4X4Lc4qHudzOhmBiBwOY6DRob4WnanAEGvNcLjF+KNOufrUoEQw==}
     engines: {node: '>=12.20.0'}
 
   once@1.4.0:
@@ -8844,6 +8859,15 @@ snapshots:
     transitivePeerDependencies:
       - vitest
 
+  '@sanity/client@8.6.2':
+    dependencies:
+      eventsource: 5.1.1
+      get-it: 9.5.4
+      obug: 3.0.0
+      rxjs: 7.8.2
+    transitivePeerDependencies:
+      - vitest
+
   '@sanity/codegen@8.1.0(react@19.3.0)(supports-color@8.1.1)(typescript@5.9.3)':
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
@@ -11321,6 +11345,8 @@ snapshots:
       rxjs: 7.8.2
 
   obug@2.2.1: {}
+
+  obug@3.0.0: {}
 
   once@1.4.0:
     dependencies:

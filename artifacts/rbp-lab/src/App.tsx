@@ -20,6 +20,8 @@ import { ResearchPage } from '@/pages/research';
 import { SiteShell } from '@/components/site-shell';
 import NotFound from '@/pages/not-found';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
+import { useSanityData } from '@/hooks/use-sanity-data';
+import { NEWS_ITEMS, NEWS_QUERY, mapNewsDocs } from '@/data/news';
 
 const queryClient = new QueryClient();
 
@@ -89,51 +91,6 @@ const gatewayCards = [
     href: '/publications',
     image: '/images/lab/Isoform_Usage.jpeg',
     description: 'Peer-reviewed work on splicing regulation, nonsense-mediated decay, and RNA-protein interactions.',
-  },
-];
-
-const newsItems = [
-  {
-    image: '/images/lab/Proteomics.jpeg',
-    headline: 'Proteomics uncovers distinct gene-regulatory functions of the MAGOH/MAGOHB paralogs in cell proliferation.',
-    year: '2026',
-    kind: 'Publication',
-    venue: 'BBA Gene Regulatory Mechanisms',
-  },
-  {
-    image: '/images/lab/Cas-9_KO_and_Splicing.jpeg',
-    headline: 'CRISPR-based genome editing developed to endogenously distinguish the paralogs MAGOH and MAGOHB.',
-    year: '2025',
-    kind: 'Publication',
-    venue: 'Gene Reports',
-  },
-  {
-    image: '/images/lab/Localization_of_MAGOH_delta_37.jpeg',
-    headline: 'An EJC-independent novel isoform of MAGOH — MAGOH-Δ37 — identified along with its interactome.',
-    year: '2025',
-    kind: 'Publication',
-    venue: 'BBRC',
-  },
-  {
-    image: '/images/lab/IP_Data.jpeg',
-    headline: 'BioID proximity mapping reveals novel SAP18 interactions within the prespliceosomal complex.',
-    year: '2024',
-    kind: 'Publication',
-    venue: 'BBRC',
-  },
-  {
-    image: '/images/lab/Isoform_Usage.jpeg',
-    headline: 'Ongoing ICMR-funded project as Co-PI on genome-wide estrogen-regulated gene expression.',
-    year: 'Ongoing',
-    kind: 'Funding · Co-PI',
-    venue: 'ICMR',
-  },
-  {
-    image: '/images/lab/Invasion.jpeg',
-    headline: 'RNPS1 identified as an oncogenic splicing factor driving proliferation in cervical cancer cells.',
-    year: '2022',
-    kind: 'Publication',
-    venue: 'IUBMB',
   },
 ];
 
@@ -415,6 +372,7 @@ function FacultyProfile() {
 
 function Home() {
   const newsRail = useRef<HTMLDivElement>(null);
+  const { data: newsItems } = useSanityData(NEWS_QUERY, mapNewsDocs, NEWS_ITEMS);
 
   const moveNews = (direction: 'previous' | 'next') => {
     newsRail.current?.scrollBy({
@@ -499,9 +457,9 @@ function Home() {
         </div>
         <div className="news-rail stagger-list" ref={newsRail} tabIndex={0} aria-label="Lab news">
           {newsItems.map((item) => (
-            <article className="news-card" key={item.headline}>
-              <FigureFrame src={item.image} alt="" />
-              <h3>{item.headline}</h3>
+            <article className="news-card" key={item.id}>
+              <FigureFrame src={item.image ?? ''} alt="" />
+              <h3>{item.summary}</h3>
               <div className="news-meta">
                 <span className="news-meta-year">{item.year}</span>
                 <span className="news-meta-source">

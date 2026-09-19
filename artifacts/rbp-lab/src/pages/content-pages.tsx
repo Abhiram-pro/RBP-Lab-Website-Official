@@ -17,8 +17,9 @@ import { Link } from 'wouter';
 import { PageHeader, Section } from '@/components/page-patterns';
 import { COLLABORATORS, type Collaborator } from '@/data/collaborators';
 import { EQUIPMENT } from '@/data/equipment';
-import { GALLERY_IMAGES } from '@/data/gallery';
-import { NEWS_ITEMS } from '@/data/news';
+import { GALLERY_IMAGES, GALLERY_QUERY, mapGalleryDocs } from '@/data/gallery';
+import { NEWS_ITEMS, NEWS_QUERY, mapNewsDocs } from '@/data/news';
+import { useSanityData } from '@/hooks/use-sanity-data';
 import { PUBLICATIONS, type Publication, type PublicationType } from '@/data/publications';
 import { CONFERENCES, CONFERENCE_YEARS, type ConferenceKind } from '@/data/conferences';
 import { coverFor } from '@/data/journals';
@@ -396,6 +397,8 @@ export function PublicationsPage() {
 }
 
 export function NewsPage() {
+  const { data: news } = useSanityData(NEWS_QUERY, mapNewsDocs, NEWS_ITEMS);
+
   return (
     <>
       <PageHeader eyebrow="RNA-Binding Proteins (RBPs) Laboratory" title="News & Achievements">
@@ -403,18 +406,27 @@ export function NewsPage() {
       </PageHeader>
       <Section tone="base" className="news-list-section">
         <ol className="news-list stagger-list">
-          {NEWS_ITEMS.map((item, index) => (
+          {news.map((item, index) => (
             <li className="news-list-item" key={item.id}>
-              <div className="news-list-number">{NEWS_ITEMS.length - index}</div>
+              <div className="news-list-number">{news.length - index}</div>
               <div>
-                <div className="eyebrow">{item.category}</div>
-                <h2>{item.title}</h2>
-                <p>{item.description}</p>
+                <div className="eyebrow">
+                  {[item.kind, item.venue, item.year].filter(Boolean).join(' · ')}
+                </div>
+                {/* Not every entry has a short title; leading with the summary
+                    beats inventing a headline for it. */}
+                <h2>{item.title ?? item.summary}</h2>
+                {item.title ? <p>{item.summary}</p> : null}
+                {item.link ? (
+                  <a className="text-link" href={item.link} target="_blank" rel="noopener noreferrer">
+                    Read more <ArrowRight size={15} aria-hidden="true" />
+                  </a>
+                ) : null}
               </div>
             </li>
           ))}
         </ol>
-        {NEWS_ITEMS.length === 0 ? <p className="empty-state">No news items yet.</p> : null}
+        {news.length === 0 ? <p className="empty-state">No news items yet.</p> : null}
       </Section>
     </>
   );
@@ -511,15 +523,17 @@ export function CollaboratorsPage() {
 }
 
 export function GalleryPage() {
+  const { data: images } = useSanityData(GALLERY_QUERY, mapGalleryDocs, GALLERY_IMAGES);
+
   return (
     <>
       <PageHeader eyebrow="RNA-Binding Proteins Laboratory · IIT Guwahati" title="Gallery">
         <p className="page-header-lede">Photographs from the lab, the department, and the people who work here.</p>
       </PageHeader>
       <Section tone="base" className="gallery-section">
-        {GALLERY_IMAGES.length === 0 ? <p className="empty-state">No gallery images yet.</p> : (
+        {images.length === 0 ? <p className="empty-state">No gallery images yet.</p> : (
           <div className="gallery-grid stagger-list">
-            {GALLERY_IMAGES.map((image, index) => (
+            {images.map((image, index) => (
               <GalleryImageFrame image={image} eager={index < 2} key={image.id} />
             ))}
           </div>

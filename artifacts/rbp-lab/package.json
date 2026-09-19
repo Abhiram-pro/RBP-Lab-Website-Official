@@ -69,5 +69,9 @@
     "vite": "catalog:",
     "wouter": "^3.3.5",
     "zod": "catalog:"
+  },
+  "dependencies": {
+    "@sanity/client": "^8.6.2",
+    "@sanity/image-url": "^2.1.1"
   }
 }

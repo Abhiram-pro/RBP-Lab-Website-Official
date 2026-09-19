@@ -94,3 +94,38 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     alt: 'Photograph 12 from the RNA-Binding Proteins Laboratory at IIT Guwahati',
   },
 ];
+
+/** Shape returned by the GROQ query in GALLERY_QUERY. */
+export interface SanityGalleryDoc {
+  _id: string;
+  caption?: string;
+  alt?: string;
+  imageUrl?: string;
+  width?: number;
+  height?: number;
+}
+
+export const GALLERY_QUERY = `*[_type == "galleryImage" && defined(image.asset)] | order(takenAt desc){
+  _id, caption,
+  "alt": image.alt,
+  "imageUrl": image.asset->url,
+  "width": image.asset->metadata.dimensions.width,
+  "height": image.asset->metadata.dimensions.height
+}`;
+
+/**
+ * Maps Studio documents onto the gallery shape. Sanity reports intrinsic
+ * dimensions in asset metadata, which the grid needs up front to reserve each
+ * frame; without them the layout shifts as images arrive.
+ */
+export function mapGalleryDocs(docs: SanityGalleryDoc[]): GalleryImage[] {
+  return docs
+    .filter((doc) => doc.imageUrl)
+    .map((doc) => ({
+      id: doc._id,
+      src: doc.imageUrl as string,
+      width: doc.width ?? 1600,
+      height: doc.height ?? 1067,
+      alt: doc.alt ?? doc.caption ?? 'Laboratory photograph',
+    }));
+}
